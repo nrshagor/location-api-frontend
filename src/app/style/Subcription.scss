@@ -1,0 +1,63 @@
+.subscriptionContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  row-gap: 40px;
+  .groupBtn {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    button {
+      width: 150px;
+      padding: 5px;
+      margin: 2px;
+      border: 1px solid rgb(3, 3, 3);
+      border-radius: 25px;
+    }
+    .active {
+      background: #ebebeb;
+      border: 1px solid #ffe5e500;
+    }
+  }
+  .groupBox {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    .boxContainer {
+      display: flex;
+      padding: 20px 15px 20px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+
+      border-radius: 6px;
+      background: #f4fffe;
+      box-shadow: 0px 0px 4px 0px #d9d9d9;
+      .recommended {
+        position: absolute;
+        top: -26px;
+        left: 31px;
+        background: #f4fffe;
+        box-shadow: 0px -1px 2px 0px #cfcfcf;
+        font-size: 16px;
+        padding: 10px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 6px;
+      }
+      .boxFree {
+        border: 1px solid red;
+        margin: 0px;
+      }
+      .boxPaid {
+        margin: 0px;
+      }
+    }
+  }
+}

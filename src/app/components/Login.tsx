@@ -49,8 +49,8 @@ const Login = () => {
         : { phone: verificationIdentifier, verificationCode };
 
       const url = isEmailLogin
-        ? `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email`
-        : `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-phone`;
+        ? `${process.env.NEXT_PUBLIC_URL}/auth/verify-email`
+        : `${process.env.NEXT_PUBLIC_URL}/auth/verify-phone`;
 
       const response = await axios.post(url, payload, {
         headers: {
@@ -82,7 +82,7 @@ const Login = () => {
       console.log("Sending login request with payload:", loginPayload);
 
       const loginResponse = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        `${process.env.NEXT_PUBLIC_URL}/auth/login`,
         loginPayload,
         {
           headers: {

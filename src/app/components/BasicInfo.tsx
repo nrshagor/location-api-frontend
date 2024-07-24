@@ -48,7 +48,7 @@ const BasicInfo = () => {
       if (userId !== null) {
         try {
           const token = getCookie("token");
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/user-info/${userId}`;
+          const url = `${process.env.NEXT_PUBLIC_URL}/auth/user-info/${userId}`;
 
           const response = await axios.get(url, {
             headers: {
@@ -99,7 +99,7 @@ const BasicInfo = () => {
         buildingAddress: formData.buildingAddress,
       };
 
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/update-profile`;
+      const url = `${process.env.NEXT_PUBLIC_URL}/auth/update-profile`;
       const token = getCookie("token");
 
       // Update user information
@@ -117,7 +117,7 @@ const BasicInfo = () => {
         const formData = new FormData();
         formData.append("profilePictureUrl", file);
 
-        const uploadUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/update-profile-picture`;
+        const uploadUrl = `${process.env.NEXT_PUBLIC_URL}/auth/update-profile-picture`;
 
         const uploadResponse = await axios.put(uploadUrl, formData, {
           headers: {
@@ -146,7 +146,7 @@ const BasicInfo = () => {
           multipleFormData.append("files", file);
         });
 
-        const multipleUploadUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/update-profile-pictures`;
+        const multipleUploadUrl = `${process.env.NEXT_PUBLIC_URL}/auth/update-profile-pictures`;
 
         const multipleUploadResponse = await axios.put(
           multipleUploadUrl,
@@ -159,7 +159,7 @@ const BasicInfo = () => {
           }
         );
 
-        console.log("Multiple image upload:", multipleUploadResponse.data);
+        console.log("Multiple image upload:", multipleUploadResponse?.data);
 
         // Update the state with the new uploaded images' URLs
         setUploadedImageUrls(
@@ -255,7 +255,7 @@ const BasicInfo = () => {
           multiple
           onChange={handleMultipleFileChange}
         />
-        {multiplePreviewUrls.length > 0 && (
+        {multiplePreviewUrls?.length > 0 && (
           <div>
             {multiplePreviewUrls.map((url, index) => (
               <Image
@@ -274,7 +274,10 @@ const BasicInfo = () => {
       <div>
         <p>Single image:</p>
         <Image
-          src={`${process.env.NEXT_PUBLIC_API_URL}/${formData.profilePictureUrl}`}
+          src={
+            `${process.env.NEXT_PUBLIC_URL}/${formData?.profilePictureUrl}` &&
+            `/`
+          }
           alt="Profile"
           width={100}
           height={100}
@@ -287,7 +290,7 @@ const BasicInfo = () => {
           {uploadedImageUrls.map((url, index) => (
             <Image
               key={index}
-              src={`${process.env.NEXT_PUBLIC_API_URL}/${url}`}
+              src={`${process.env.NEXT_PUBLIC_URL}/${url}`}
               alt={`Uploaded ${index}`}
               width={100}
               height={100}

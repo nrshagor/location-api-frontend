@@ -1,6 +1,7 @@
 // components/CustomSelect.tsx
 
 import React, { useState, useEffect, useRef } from "react";
+import "../style/CustomSelect.scss";
 
 interface Option {
   value: string;
@@ -12,6 +13,7 @@ interface CustomSelectProps {
   placeholder?: string;
   allowClear?: boolean;
   onChange?: (value: string) => void;
+  disabled?: boolean;
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -19,6 +21,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   placeholder = "Search to Select",
   allowClear = false,
   onChange,
+  disabled,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
     undefined
@@ -53,6 +56,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     if (!isOpen && inputRef.current) {
       inputRef.current.focus();
     }
+    clearSelection();
   };
 
   const clearSelection = () => {
@@ -78,6 +82,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           onChange={handleInputChange}
           onClick={toggleDropdown} // Ensure dropdown opens when input clicked
           ref={inputRef} // Reference to input field for focusing
+          disabled={disabled}
         />
         {selectedValue !== undefined && allowClear && (
           <span className="clear-icon" onClick={clearSelection}>
@@ -98,58 +103,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
           </ul>
         )}
       </div>
-      <style jsx>{`
-        .custom-select {
-          position: relative;
-          width: 200px;
-        }
-        .select-control {
-          position: relative;
-          display: inline-block;
-          width: 100%;
-          cursor: pointer;
-        }
-        .select-control input {
-          width: calc(100% - 24px);
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          font-size: 16px;
-          outline: none;
-        }
-        .clear-icon {
-          position: absolute;
-          top: 50%;
-          right: 8px;
-          transform: translateY(-50%);
-          cursor: pointer;
-          color: #999;
-        }
-        .options-list {
-          position: absolute;
-          top: calc(100% + 4px);
-          left: 0;
-          z-index: 10;
-          width: 100%;
-          max-height: 200px;
-          overflow-y: auto;
-          background-color: #fff;
-          border: 1px solid #ccc;
-          border-top: none;
-          border-radius: 0 0 4px 4px;
-          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-          list-style-type: none;
-          padding: 0;
-          margin: 0;
-        }
-        .options-list li {
-          padding: 8px 16px;
-          cursor: pointer;
-        }
-        .options-list li.selected {
-          background-color: #f0f0f0;
-        }
-      `}</style>
     </div>
   );
 };

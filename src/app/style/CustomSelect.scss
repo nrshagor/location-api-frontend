@@ -1,0 +1,53 @@
+.custom-select {
+  position: relative;
+  width: 200px;
+
+  .select-control {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    cursor: pointer;
+    input {
+      width: calc(100% - 24px);
+      padding: 8px;
+      border: 1px solid #bba5a5;
+      border-radius: 4px;
+      font-size: 16px;
+      outline: none;
+    }
+    .clear-icon {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #000000;
+      display: none;
+    }
+    .options-list {
+      position: absolute;
+      top: calc(101% + 0px);
+      left: 0;
+      z-index: 3;
+      width: 88%;
+      max-height: 201px;
+      overflow-y: auto;
+      background-color: #fff;
+      border: 1px solid #fff;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.1);
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      scrollbar-width: none;
+    }
+    .options-list li {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .options-list li.selected {
+      background-color: #f0f0f0;
+    }
+  }
+}

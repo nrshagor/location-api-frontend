@@ -67,7 +67,7 @@ const Register = () => {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email`,
+        `${process.env.NEXT_PUBLIC_URL}/auth/verify-email`,
         payload,
         {
           headers: {
@@ -98,7 +98,7 @@ const Register = () => {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-phone`,
+        `${process.env.NEXT_PUBLIC_URL}/auth/verify-phone`,
         payload,
         {
           headers: {
@@ -131,7 +131,7 @@ const Register = () => {
       console.log("Sending login request with payload:", loginPayload);
 
       const loginResponse = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        `${process.env.NEXT_PUBLIC_URL}/auth/login`,
         loginPayload,
         {
           headers: {
@@ -186,7 +186,7 @@ const Register = () => {
 
       // Register the user
       const registerResponse = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        `${process.env.NEXT_PUBLIC_URL}/auth/register`,
         payload,
         {
           headers: {
@@ -307,7 +307,8 @@ const Register = () => {
           onChange={handleVerificationCodeChange}
         />
         <button
-          onClick={emailRegistration ? handleVerifyEmail : handleVerifyPhone}>
+          onClick={emailRegistration ? handleVerifyEmail : handleVerifyPhone}
+        >
           Submit
         </button>
       </CustomModal>
