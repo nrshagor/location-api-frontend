@@ -4,9 +4,15 @@ import React, { useEffect, useState } from "react";
 import "../style/navbar.scss";
 import LogoutButton from "./LogoutButton";
 import { auth } from "../utils/jwt";
+import { usePathname, useRouter } from "next/navigation";
 const Navbar = () => {
   const userid = auth()?.sub;
+  const path = usePathname();
+  useEffect(() => {
+    console.log(path);
+  }, [path]);
 
+  console.log(userid, "dsafas");
   return (
     <div className="navbar">
       <Link href="/">Home</Link>
