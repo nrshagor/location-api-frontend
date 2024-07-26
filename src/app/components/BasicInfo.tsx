@@ -6,10 +6,39 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-const BasicInfo = () => {
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Country {
+  id: number;
+  name_en: string;
+  stateList: State[];
+}
+
+interface State {
+  id: number;
+  name_en: string;
+  districtList: District[];
+}
+
+interface District {
+  id: number;
+  name_en: string;
+  subDistrictList: Subdistrict[];
+}
+
+interface Subdistrict {
+  id: number;
+  name_en: string;
+}
+
+const BasicInfo: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastname: "",
+    countries: "",
     division: "",
     district: "",
     thana: "",
@@ -24,6 +53,139 @@ const BasicInfo = () => {
   const [multipleFiles, setMultipleFiles] = useState<File[]>([]);
   const [multiplePreviewUrls, setMultiplePreviewUrls] = useState<string[]>([]);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
+
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [divisions, setDivisions] = useState<Option[]>([]);
+  const [districts, setDistricts] = useState<Option[]>([]);
+  const [thanas, setThanas] = useState<Option[]>([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (userId !== null) {
+        try {
+          const token = getCookie("token");
+          const url = `${process.env.NEXT_PUBLIC_URL}/auth/user-info/${userId}`;
+
+          const response = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const userData = response.data;
+          setFormData({
+            firstName: userData.firstName,
+            lastname: userData.lastname,
+            countries: userData.countries,
+            division: userData.division,
+            district: userData.district,
+            thana: userData.thana,
+            postalCode: userData.postalCode,
+            buildingAddress: userData.buildingAddress,
+            profilePictureUrl: userData.profilePictureUrl,
+          });
+          setUploadedImageUrls(userData.profilePictureUrls || []);
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.error("Error response:", error.response?.data);
+          } else {
+            console.error("Unexpected error:", error);
+          }
+        }
+      }
+    };
+
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_URL}/countries`
+        );
+        setCountries(response.data);
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+
+    fetchUserData();
+    fetchCountries();
+  }, [userId]);
+
+  useEffect(() => {
+    if (formData.countries) {
+      const country = countries.find(
+        (c) => c.id.toString() === formData.countries
+      );
+      if (country) {
+        const stateOptions: Option[] = country.stateList.map(
+          (state: State) => ({
+            value: state.id.toString(),
+            label: state.name_en,
+          })
+        );
+        setDivisions(stateOptions);
+      } else {
+        setDivisions([]);
+      }
+      setDistricts([]);
+      setThanas([]);
+    }
+  }, [formData.countries, countries]);
+
+  useEffect(() => {
+    if (formData.division) {
+      const fetchDistricts = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_URL}/state/${formData.division}`
+          );
+          const data = response.data.districtList.map((item: District) => ({
+            value: item.id.toString(),
+            label: item.name_en,
+          }));
+          setDistricts(data);
+        } catch (error) {
+          console.error("Error fetching districts:", error);
+        }
+      };
+
+      fetchDistricts();
+    } else {
+      setDistricts([]);
+      setThanas([]);
+    }
+  }, [formData.division]);
+
+  useEffect(() => {
+    if (formData.district) {
+      const fetchThanas = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_URL}/districts/${formData.district}`
+          );
+          const data = response.data.subDistrictList.map(
+            (item: Subdistrict) => ({
+              value: item.id.toString(),
+              label: item.name_en,
+            })
+          );
+          setThanas(data);
+        } catch (error) {
+          console.error("Error fetching thanas:", error);
+        }
+      };
+
+      fetchThanas();
+    } else {
+      setThanas([]);
+    }
+  }, [formData.district]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -43,55 +205,13 @@ const BasicInfo = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId !== null) {
-        try {
-          const token = getCookie("token");
-          const url = `${process.env.NEXT_PUBLIC_URL}/auth/user-info/${userId}`;
-
-          const response = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const userData = response.data;
-          setFormData({
-            firstName: userData.firstName,
-            lastname: userData.lastname,
-            division: userData.division,
-            district: userData.district,
-            thana: userData.thana,
-            postalCode: userData.postalCode,
-            buildingAddress: userData.buildingAddress,
-            profilePictureUrl: userData.profilePictureUrl,
-          });
-          setUploadedImageUrls(userData.profilePictureUrls || []);
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            console.error("Error response:", error.response?.data);
-          } else {
-            console.error("Unexpected error:", error);
-          }
-        }
-      }
-    };
-
-    fetchData();
-  }, [userId]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const payload = {
         firstName: formData.firstName,
         lastname: formData.lastname,
+        countries: formData.countries,
         division: formData.division,
         district: formData.district,
         thana: formData.thana,
@@ -196,27 +316,57 @@ const BasicInfo = () => {
           value={formData.lastname}
           onChange={handleInputChange}
         />
-        <input
-          type="text"
+        <select
+          name="countries"
+          value={formData.countries}
+          onChange={handleInputChange}
+        >
+          <option value="">Select Country</option>
+          {countries.map((country) => (
+            <option key={country.id} value={country.id.toString()}>
+              {country.name_en}
+            </option>
+          ))}
+        </select>
+        <select
           name="division"
-          placeholder="Division"
           value={formData.division}
           onChange={handleInputChange}
-        />
-        <input
-          type="text"
+          disabled={!formData.countries}
+        >
+          <option value="">Select Division</option>
+          {divisions.map((division) => (
+            <option key={division.value} value={division.value}>
+              {division.label}
+            </option>
+          ))}
+        </select>
+        <select
           name="district"
-          placeholder="District"
           value={formData.district}
           onChange={handleInputChange}
-        />
-        <input
-          type="text"
+          disabled={!formData.division}
+        >
+          <option value="">Select District</option>
+          {districts.map((district) => (
+            <option key={district.value} value={district.value}>
+              {district.label}
+            </option>
+          ))}
+        </select>
+        <select
           name="thana"
-          placeholder="Thana"
           value={formData.thana}
           onChange={handleInputChange}
-        />
+          disabled={!formData.district}
+        >
+          <option value="">Select Thana</option>
+          {thanas.map((thana) => (
+            <option key={thana.value} value={thana.value}>
+              {thana.label}
+            </option>
+          ))}
+        </select>
         <input
           type="text"
           name="postalCode"
