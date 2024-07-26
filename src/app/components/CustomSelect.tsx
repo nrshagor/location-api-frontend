@@ -14,6 +14,7 @@ interface CustomSelectProps {
   allowClear?: boolean;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  value?: string; // Add value prop
 }
 
 const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -22,10 +23,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   allowClear = false,
   onChange,
   disabled,
+  value, // Add value prop
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(value);
   const [inputValue, setInputValue] = useState<string>("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -71,6 +71,16 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
     // Reset filtered options when component re-renders
     setFilteredOptions(options);
   }, [options]);
+
+  useEffect(() => {
+    setSelectedValue(value);
+    if (value) {
+      const selectedOption = options.find((option) => option.value === value);
+      if (selectedOption) {
+        setInputValue(selectedOption.label);
+      }
+    }
+  }, [value, options]);
 
   return (
     <div className="custom-select">

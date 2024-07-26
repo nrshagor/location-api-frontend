@@ -12,7 +12,6 @@ const Navbar = () => {
     console.log(path);
   }, [path]);
 
-  console.log(userid, "dsafas");
   return (
     <div className="navbar">
       <Link href="/">Home</Link>
@@ -28,7 +27,6 @@ const Navbar = () => {
           <LogoutButton />
         </>
       )}
-      {userid}
     </div>
   );
 };
