@@ -198,7 +198,10 @@ const DomainInfo = () => {
 
       {/* Modal for Upgrade */}
       <CustomModal isOpen={isModalOpen1} onClose={() => setIsModalOpen1(false)}>
-        <PurchesPlan userDomains={userDomain} />
+        <PurchesPlan
+          userDomains={userDomain}
+          onClose={() => setIsModalOpen1(false)} // Pass the close handler
+        />
       </CustomModal>
     </div>
   );

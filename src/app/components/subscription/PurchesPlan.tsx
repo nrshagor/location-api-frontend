@@ -18,7 +18,7 @@ interface plans {
   tag: string;
 }
 
-const PurchesPlan = ({ userDomains }: any) => {
+const PurchesPlan = ({ userDomains, onClose }: any) => {
   const userId = auth()?.sub;
   const role = auth()?.role;
   const [plans, setPlan] = useState<plans[]>([]);
@@ -97,6 +97,7 @@ const PurchesPlan = ({ userDomains }: any) => {
       console.log("Submission response:", response.data);
       if (response.status === 201) {
         closeModal();
+        onClose();
         // Reset values
         setUserDomain("");
         setPlanId(undefined);
