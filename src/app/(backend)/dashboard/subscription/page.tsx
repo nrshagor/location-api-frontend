@@ -1,7 +1,17 @@
-import DomainInfo from "@/app/components/subscription/DomainInfo";
-import PurchesPlan from "@/app/components/subscription/PurchesPlan";
+import dynamic from "next/dynamic";
 import React from "react";
-
+const PurchesPlan = dynamic(
+  () => import("@/app/components/subscription/PurchesPlan"),
+  {
+    ssr: false,
+  }
+);
+const DomainInfo = dynamic(
+  () => import("@/app/components/subscription/DomainInfo"),
+  {
+    ssr: false,
+  }
+);
 const Page = () => {
   return (
     <div>

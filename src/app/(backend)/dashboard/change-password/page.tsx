@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { getCookie } from "cookie-handler-pro";
 
-const ChangePasswordPage = () => {
+const Page = () => {
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -108,4 +108,4 @@ const ChangePasswordPage = () => {
   );
 };
 
-export default ChangePasswordPage;
+export default Page;

@@ -42,7 +42,7 @@ const TransactionTable: React.FC = () => {
     setLoading(true);
     try {
       const { data } = await axios.get<TransactionResponse>(
-        "http://localhost:4000/transaction",
+        `${process.env.NEXT_PUBLIC_URL}/transaction`,
         {
           params: {
             page,
@@ -85,7 +85,7 @@ const TransactionTable: React.FC = () => {
   const handleVerifySubmit = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/transaction/verify",
+        `${process.env.NEXT_PUBLIC_URL}/transaction/verify`,
         {
           transactionId: transactionIdInput, // Use the input value from the modal
         }
@@ -191,7 +191,8 @@ const TransactionTable: React.FC = () => {
       <div>
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}>
+          disabled={page === 1}
+        >
           Previous
         </button>
         <span>{` Page ${page} of ${Math.ceil(total / limit)} `}</span>
@@ -199,7 +200,8 @@ const TransactionTable: React.FC = () => {
           onClick={() =>
             setPage((prev) => (prev * limit < total ? prev + 1 : prev))
           }
-          disabled={page * limit >= total}>
+          disabled={page * limit >= total}
+        >
           Next
         </button>
 
@@ -208,7 +210,8 @@ const TransactionTable: React.FC = () => {
           <label>Items per page: </label>
           <select
             value={limit}
-            onChange={(e) => handleLimitChange(e.target.value)}>
+            onChange={(e) => handleLimitChange(e.target.value)}
+          >
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="20">20</option>

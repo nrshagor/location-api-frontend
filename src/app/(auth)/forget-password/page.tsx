@@ -39,7 +39,7 @@ const Page = () => {
     try {
       const payload = { identifier: verificationIdentifier };
 
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/request-password-reset`;
+      const url = `${process.env.NEXT_PUBLIC_URL}/auth/request-password-reset`;
       const response = await axios.post(url, payload, {
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const Page = () => {
         confirmPassword: formData.confirmPassword,
       };
 
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`;
+      const url = `${process.env.NEXT_PUBLIC_URL}/auth/reset-password`;
 
       const response = await axios.post(url, payload, {
         headers: {
