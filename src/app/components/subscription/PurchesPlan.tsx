@@ -57,7 +57,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
 
     fetchPlans();
   }, []);
-
+  console.log(plans);
   const isMonthly = (e: number) => {
     setMonthlyOrYear(e);
   };
@@ -134,7 +134,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
       <div className="groupBox">
         {plans.map(
           (plan) =>
-            plan.durationInMonths === monthyOrYear && (
+            (plan.durationInMonths === monthyOrYear && (
               <div className="boxContainer" key={plan.id}>
                 <div className="boxPaid" onClick={() => openModal(plan)}>
                   <p>Name: {plan.name}</p>
@@ -148,7 +148,22 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
                   <p>Current Price: {plan.currentPrice}</p>
                 </div>
               </div>
-            )
+            )) ||
+            (role == "supperAdmin" && plan.durationInMonths === 0 && (
+              <div className="boxContainer" key={plan.id}>
+                <div className="boxPaid" onClick={() => openModal(plan)}>
+                  <p>Name: {plan.name}</p>
+                  <p>
+                    Limit:{" "}
+                    {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
+                  </p>
+                  <p>Duration In Months: {plan.durationInMonths}</p>
+                  <p>Regular Prices: {plan.regularPricces}</p>
+                  <p>Discount: {plan.discount}%</p>
+                  <p>Current Price: {plan.currentPrice}</p>
+                </div>
+              </div>
+            ))
         )}
       </div>
 
