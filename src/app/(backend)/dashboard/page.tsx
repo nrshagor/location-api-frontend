@@ -1,4 +1,5 @@
 "use client";
+import TransactionTable from "@/app/components/TransactionTable";
 import { auth, DecodedToken } from "@/app/utils/jwt";
 import Link from "next/link";
 const subcription = "/dashboard/subscription";
@@ -11,6 +12,7 @@ const Page = () => {
     <div>
       {email}
       <Link href={subcription}>subcription</Link>
+      <TransactionTable />
     </div>
   );
 };
