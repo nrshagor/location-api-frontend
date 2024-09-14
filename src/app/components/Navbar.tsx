@@ -1,13 +1,23 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarMenuToggle,
+  NavbarMenuItem,
+  NavbarMenu,
+  NavbarContent,
+  NavbarItem,
+  Button,
+} from "@nextui-org/react";
 import LogoutButton from "./LogoutButton";
 import { auth } from "../utils/jwt";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
-const Navbar = () => {
+const NavbarComponent = () => {
   const [userid, setUserid] = useState<string | null>(null);
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const path = usePathname();
 
   // Get user ID
@@ -16,50 +26,82 @@ const Navbar = () => {
     setUserid(userIdFromAuth ? String(userIdFromAuth) : null);
   }, [path]);
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!isMobileMenuOpen);
-  };
+  // Menu items
+  const menuItems = userid
+    ? ["Dashboard", "Profile", "Log Out"]
+    : ["Login", "Register"];
 
   return (
-    <nav className="bg-gray-800 p-4 flex justify-between items-center text-white">
-      <Link href="/" className="text-xl">
-        Home
-      </Link>
-      <button
-        className="md:hidden text-2xl focus:outline-none"
-        onClick={toggleMobileMenu}
-      >
-        &#9776;
-      </button>
-      <div
-        className={`flex-col md:flex md:flex-row md:items-center ${
-          isMobileMenuOpen ? "flex" : "hidden"
-        }`}
-      >
-        {!userid ? (
+    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+      {/* Mobile menu toggle */}
+      <NavbarContent className="sm:hidden" justify="start">
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        />
+      </NavbarContent>
+
+      {/* Brand and main navigation */}
+      <NavbarContent justify="center" className="sm:hidden pr-3">
+        <NavbarBrand>
+          <Link href="/" className="font-bold text-inherit">
+            Home
+          </Link>
+        </NavbarBrand>
+      </NavbarContent>
+
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarBrand>
+          <Link href="/" className="font-bold text-inherit">
+            Home
+          </Link>
+        </NavbarBrand>
+
+        {userid ? (
           <>
-            <Link href="/login" className="mt-2 md:mt-0 md:ml-4">
-              Login
-            </Link>
-            <Link href="/register" className="mt-2 md:mt-0 md:ml-4">
-              Register
-            </Link>
+            <NavbarItem>
+              <Link href="/dashboard">Dashboard</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link href="/dashboard/profile">Profile</Link>
+            </NavbarItem>
           </>
         ) : (
           <>
-            <Link href="/dashboard" className="mt-2 md:mt-0 md:ml-4">
-              Dashboard
-            </Link>
-            <Link href="/dashboard/profile" className="mt-2 md:mt-0 md:ml-4">
-              Profile
-            </Link>
-            <LogoutButton />
+            <NavbarItem>
+              <Link href="/login">Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link href="/register">Register</Link>
+            </NavbarItem>
           </>
         )}
-      </div>
-    </nav>
+      </NavbarContent>
+
+      {/* User action buttons */}
+      <NavbarContent justify="end">
+        {userid && (
+          <NavbarItem>
+            <LogoutButton />
+          </NavbarItem>
+        )}
+      </NavbarContent>
+
+      {/* Mobile menu */}
+      <NavbarMenu>
+        {menuItems.map((item, index) => (
+          <NavbarMenuItem key={index}>
+            <Link
+              href={`/${item.toLowerCase()}`}
+              className="w-full"
+              color={item === "Log Out" ? "danger" : "foreground"}
+            >
+              {item}
+            </Link>
+          </NavbarMenuItem>
+        ))}
+      </NavbarMenu>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default NavbarComponent;
