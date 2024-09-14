@@ -5,6 +5,7 @@ import "@/app/style/Subcription.scss";
 import CustomModal from "@/app/components/CustomModal";
 import { auth } from "@/app/utils/jwt";
 import { getCookie } from "cookie-handler-pro";
+
 interface plans {
   callLimit: number;
   durationInMonths: number;
@@ -23,15 +24,24 @@ const PurchesPlan = ({ userDomains }: any) => {
   const [plans, setPlan] = useState<plans[]>([]);
   const [monthyOrYear, setMonthlyOrYear] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalStep, setModalStep] = useState(1); // Track modal steps
   const [userDomain, setUserDomain] = useState<string>(userDomains);
-  const [modalContent, setModalContent] = useState("");
+  const [transactionType, setTransactionType] = useState<string>("bkash");
+  const [accountNumber, setAccountNumber] = useState<string>("");
+  const [transactionId, setTransactionId] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0); // Track amount by plan
   const [planId, setPlanId] = useState<number>();
-  const openModal = (content: any) => {
-    setModalContent(content);
+
+  const openModal = (plan: any) => {
+    setPlanId(plan.id);
+    setAmount(plan.currentPrice); // Set the amount based on plan
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalStep(1); // Reset step on close
+  };
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -55,25 +65,28 @@ const PurchesPlan = ({ userDomains }: any) => {
   const handleSetDomain = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserDomain(e.target.value);
   };
-  console.log(userDomain);
-  // get value
-  const getValue = (e: any) => {
-    setPlanId(e);
-    openModal(true);
+
+  const handleTransactionTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setTransactionType(e.target.value);
   };
 
   const handleSubmit = async (e: any) => {
     try {
-      const subscriptionPlayload = {
+      const subscriptionPayload = {
         ipOrDomain: userDomain,
         userId,
         planId,
+        amount,
+        transactionType,
+        accountNumber,
+        transactionId,
       };
-      console.log(subscriptionPlayload);
       const token = getCookie("token");
-      const setDomainResponse = await axios.post(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/subscription`,
-        subscriptionPlayload,
+        subscriptionPayload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -81,98 +94,100 @@ const PurchesPlan = ({ userDomains }: any) => {
           },
         }
       );
-      console.log("Submission response:", setDomainResponse.data);
-      if (setDomainResponse.status == 201) {
+      console.log("Submission response:", response.data);
+      if (response.status === 201) {
         closeModal();
+        // Reset values
+        setUserDomain("");
+        setPlanId(undefined);
       }
     } catch (error) {
-      console.log("Not Validate User");
+      console.log("Error submitting subscription:", error);
     }
-    setUserDomain("");
   };
+
+  const goToNextStep = () => {
+    setModalStep(2); // Go to step 2 for transaction details
+  };
+
   return (
     <div className="subscriptionContainer">
       <div className="groupBtn">
         <button
           className={monthyOrYear === 1 ? "active" : ""}
-          onClick={() => isMonthly(1)}
-        >
+          onClick={() => isMonthly(1)}>
           Monthly
         </button>
         <button
           className={monthyOrYear === 12 ? "active" : ""}
-          onClick={() => isMonthly(12)}
-        >
+          onClick={() => isMonthly(12)}>
           Yearly
         </button>
         <button
           className={monthyOrYear === 24 ? "active" : ""}
-          onClick={() => isMonthly(24)}
-        >
+          onClick={() => isMonthly(24)}>
           Two Yearly
         </button>
       </div>
 
       <div className="groupBox">
-        {role == "supperAdmin1" && (
-          <div
-            className="boxFree"
-            key={plans[0]?.id}
-            onClick={() => getValue(plans[0]?.id)}
-          >
-            <p>Name: {plans[0]?.name}</p>
-            <p>Limit: {plans[0]?.callLimit}</p>
-            <p>Duration In Months: {plans[0]?.durationInMonths}</p>
-            <p>Reguler Prices: {plans[0]?.regularPricces}</p>
-            <p>Discount: {plans[0]?.discount}</p>
-            <p>Current Prices: {plans[0]?.currentPrice}</p>
-          </div>
-        )}
-
         {plans.map(
           (plan) =>
-            plan.durationInMonths == monthyOrYear && (
-              <>
-                <div className="boxContainer">
-                  {!plan.tag ? (
-                    ""
-                  ) : (
-                    <div className="recommended">{plan.tag}</div>
-                  )}
-
-                  <div
-                    className="boxPaid"
-                    key={plan.id}
-                    onClick={() => getValue(plan.id)}
-                  >
-                    <p>Name: {plan.name}</p>
-                    <p>
-                      Limit:{" "}
-                      {plan.callLimit == -1 ? "Unlimited" : plan.callLimit}
-                    </p>
-                    <p>Duration In Months: {plan.durationInMonths}</p>
-                    <p>Reguler Prices: {plan.regularPricces}</p>
-                    <p>Discount: {plan.discount}</p>
-                    <p>Current Prices: {plan.currentPrice}</p>
-                  </div>
+            plan.durationInMonths === monthyOrYear && (
+              <div className="boxContainer" key={plan.id}>
+                <div className="boxPaid" onClick={() => openModal(plan)}>
+                  <p>Name: {plan.name}</p>
+                  <p>
+                    Limit:{" "}
+                    {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
+                  </p>
+                  <p>Duration In Months: {plan.durationInMonths}</p>
+                  <p>Regular Prices: {plan.regularPricces}</p>
+                  <p>Discount: {plan.discount}%</p>
+                  <p>Current Price: {plan.currentPrice}</p>
                 </div>
-              </>
+              </div>
             )
         )}
       </div>
 
       <CustomModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>You seleted Plan {planId}</h2>
-        <input type="text" value={planId} readOnly hidden />
-
-        <input
-          type="text"
-          placeholder="Enter your domain"
-          value={userDomain}
-          onChange={handleSetDomain}
-        />
-
-        <button onClick={handleSubmit}>Submit</button>
+        {modalStep === 1 ? (
+          <>
+            <h2>Step 1: Enter Domain</h2>
+            <input
+              type="text"
+              placeholder="Enter your domain"
+              value={userDomain}
+              onChange={handleSetDomain}
+            />
+            <button onClick={goToNextStep}>Next</button>
+          </>
+        ) : (
+          <>
+            <h2>Step 2: Enter Transaction Details</h2>
+            <p>Plan Amount: {amount}</p>
+            <select
+              value={transactionType}
+              onChange={handleTransactionTypeChange}>
+              <option value="bkash">Bkash</option>
+              <option value="bank">Bank</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Enter Account Number"
+              value={accountNumber}
+              onChange={(e) => setAccountNumber(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Enter Transaction ID"
+              value={transactionId}
+              onChange={(e) => setTransactionId(e.target.value)}
+            />
+            <button onClick={handleSubmit}>Submit</button>
+          </>
+        )}
       </CustomModal>
     </div>
   );

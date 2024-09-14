@@ -5,7 +5,8 @@ import React, { useEffect, useState } from "react";
 import CustomModal from "../CustomModal";
 import { getCookie } from "cookie-handler-pro";
 import PurchesPlan from "./PurchesPlan";
-interface domainList {
+
+interface DomainList {
   id: number;
   domain: string;
   plan: string;
@@ -19,24 +20,16 @@ interface domainList {
 
 const DomainInfo = () => {
   const userId = auth()?.sub;
-  const [domainList, setDomainList] = useState<domainList[]>([]);
-  const [isModalOpen1, setIsModalOpen1] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [domainList, setDomainList] = useState<DomainList[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // For domain input modal
+  const [isModalStep2Open, setIsModalStep2Open] = useState(false); // For transaction details modal
+  const [isModalOpen1, setIsModalOpen1] = useState(false); // For upgrade modal
   const [userDomain, setUserDomain] = useState<string>("");
-  const [modalContent, setModalContent] = useState("");
-  const [modalContent1, setModalContent1] = useState("");
-  const [planId, setPlanId] = useState<number>();
-  const openModal = (content: any) => {
-    setModalContent(content);
-    setIsModalOpen(true);
-  };
-  const openModal1 = (content: any) => {
-    setModalContent1(content);
-    setIsModalOpen1(true);
-  };
-
-  const closeModal = () => setIsModalOpen(false);
-  const closeModal1 = () => setIsModalOpen1(false);
+  const [planId, setPlanId] = useState<number | undefined>();
+  const [amount, setAmount] = useState<number>(0);
+  const [transactionType, setTransactionType] = useState<string>("bkash");
+  const [accountNumber, setAccountNumber] = useState<string>("");
+  const [transactionId, setTransactionId] = useState<string>("");
 
   useEffect(() => {
     const fetchDomainInfo = async () => {
@@ -46,31 +39,58 @@ const DomainInfo = () => {
         );
         setDomainList(response.data);
       } catch (error) {
-        //
+        console.error("Error fetching domain info:", error);
       }
     };
     fetchDomainInfo();
   }, [userId]);
 
-  // get value
-  const getValue = (e: any, domain: any) => {
-    setPlanId(e);
-    setUserDomain(domain);
-    openModal(true);
+  const fetchAmount = async (planId: number) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_URL}/subscription-plan/${planId}`
+      );
+      setAmount(response.data.currentPrice);
+    } catch (error) {
+      console.error("Error fetching plan amount:", error);
+    }
   };
 
-  const handleSubmit = async (e: any) => {
+  const getValue = (planId: number, domain: string) => {
+    setPlanId(planId);
+    setUserDomain(domain);
+    setIsModalOpen(true);
+  };
+
+  const handlePlanSelection = async () => {
+    if (planId) {
+      await fetchAmount(planId);
+      setIsModalOpen(false);
+      setIsModalStep2Open(true);
+    }
+  };
+
+  const upgrated = (domain: string) => {
+    setUserDomain(domain);
+    setIsModalOpen1(true);
+  };
+
+  const handleRenewSubmit = async () => {
     try {
-      const subscriptionPlayload = {
+      const subscriptionPayload = {
         ipOrDomain: userDomain,
         userId,
         planId,
+        amount, // Include amount
+        transactionType, // Include transactionType
+        accountNumber, // Include accountNumber
+        transactionId, // Include transactionId
       };
-      console.log(subscriptionPlayload);
+
       const token = getCookie("token");
-      const setDomainResponse = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/subscription`,
-        subscriptionPlayload,
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL}/subscription/`, // Ensure this endpoint exists
+        subscriptionPayload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -78,39 +98,46 @@ const DomainInfo = () => {
           },
         }
       );
-      console.log("Submission response:", setDomainResponse.data);
-      if (setDomainResponse.status == 201) {
-        closeModal();
+      console.log(subscriptionPayload);
+      if (response.status === 201) {
+        console.log("Successfully renewed subscription");
+        setUserDomain("");
+        setPlanId(undefined);
+        setAmount(0);
+        setTransactionType("bkash");
+        setAccountNumber("");
+        setTransactionId("");
+        setIsModalStep2Open(false);
+        setIsModalOpen(false);
+      } else {
+        console.log("Renewal failed:", response.statusText);
       }
     } catch (error) {
-      console.log("Not Validate User");
+      if (error instanceof Error) {
+        console.log("Error renewing subscription:", error.message);
+      } else {
+        console.log("Unknown error occurred:", error);
+      }
     }
-    setUserDomain("");
-  };
-
-  // Upgrated
-  const upgrated = (e: any) => {
-    setUserDomain(e);
-    openModal1(true);
   };
 
   return (
-    <div className="">
+    <div>
       {domainList.map((singleDomain, index) => (
         <div key={index}>
           <div className="flex">
-            <p key={singleDomain.id}>domain {singleDomain.domain}</p>
-            <p>plan {singleDomain.plan}</p>
+            <p>Domain: {singleDomain.domain}</p>
+            <p>Plan: {singleDomain.plan}</p>
             <p>
-              Limit:
-              {singleDomain?.callLimit == -1
+              Limit:{" "}
+              {singleDomain.callLimit === -1
                 ? "Unlimited"
-                : singleDomain?.callLimit}
+                : singleDomain.callLimit}
             </p>
-            <p>used {singleDomain.used}</p>
+            <p>Used: {singleDomain.used}</p>
             <p>
-              remaining{" "}
-              {singleDomain?.callLimit == -1
+              Remaining:{" "}
+              {singleDomain.callLimit === -1
                 ? "Infinity"
                 : singleDomain.remaining}
             </p>
@@ -118,29 +145,59 @@ const DomainInfo = () => {
             <p>{singleDomain.endDate}</p>
 
             <button
-              onClick={() => getValue(singleDomain.planId, singleDomain.domain)}
-            >
+              onClick={() =>
+                getValue(singleDomain.planId, singleDomain.domain)
+              }>
               Renew
             </button>
             <button onClick={() => upgrated(singleDomain.domain)}>
-              Upgrated
+              Upgrade
             </button>
           </div>
         </div>
       ))}
-      <CustomModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>You seleted Plan {planId}</h2>
-        <input type="text" value={planId} readOnly hidden />
+
+      {/* Modal for Renew Step 1: Domain Input */}
+      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h2>Step 1: Enter Domain</h2>
         <input
           type="text"
           placeholder="Enter your domain"
-          readOnly
           value={userDomain}
+          readOnly
         />
-        <button onClick={handleSubmit}>Submit</button>
+        <button onClick={handlePlanSelection}>Next</button>
       </CustomModal>
-      {/* Upgrated */}
-      <CustomModal isOpen={isModalOpen1} onClose={closeModal1}>
+
+      {/* Modal for Renew Step 2: Transaction Details */}
+      <CustomModal
+        isOpen={isModalStep2Open}
+        onClose={() => setIsModalStep2Open(false)}>
+        <h2>Step 2: Enter Transaction Details</h2>
+        <p>Plan Amount: {amount}</p>
+        <select
+          value={transactionType}
+          onChange={(e) => setTransactionType(e.target.value)}>
+          <option value="bkash">Bkash</option>
+          <option value="bank">Bank</option>
+        </select>
+        <input
+          type="text"
+          placeholder="Enter Account Number"
+          value={accountNumber}
+          onChange={(e) => setAccountNumber(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Enter Transaction ID"
+          value={transactionId}
+          onChange={(e) => setTransactionId(e.target.value)}
+        />
+        <button onClick={handleRenewSubmit}>Submit</button>
+      </CustomModal>
+
+      {/* Modal for Upgrade */}
+      <CustomModal isOpen={isModalOpen1} onClose={() => setIsModalOpen1(false)}>
         <PurchesPlan userDomains={userDomain} />
       </CustomModal>
     </div>
