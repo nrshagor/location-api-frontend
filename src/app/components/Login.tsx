@@ -1,6 +1,7 @@
 "use client";
 import CustomModal from "@/app/components/CustomModal";
-import axios from "axios";
+import { Button } from "@nextui-org/react";
+import axios, { AxiosError } from "axios";
 import { setCookie } from "cookie-handler-pro";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,8 @@ const Login = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationIdentifier, setVerificationIdentifier] = useState("");
   const [isEmailLogin, setIsEmailLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const openModal = (content: any) => {
     setModalContent(content);
@@ -27,19 +30,6 @@ const Login = () => {
     const { name, value } = e.target;
     if (name === "identifier") setIdentifier(value);
     if (name === "password") setPassword(value);
-  };
-
-  const handleVerificationCodeChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setVerificationCode(e.target.value);
-  };
-
-  const handleVerificationIdentifierChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setVerificationIdentifier(e.target.value);
-    console.log(e.target.value);
   };
 
   const handleVerify = async () => {
@@ -58,70 +48,49 @@ const Login = () => {
         },
       });
 
-      console.log("Verification successful:", response.data);
       closeModal();
-
-      // Try to login again after verification
       await handleLogin();
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error response:", error.response?.data);
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      console.error("Verification failed:", error);
     }
   };
 
   const handleLogin = async () => {
     try {
-      const loginPayload = {
-        identifier,
-        password,
-      };
-
-      console.log("Sending login request with payload:", loginPayload);
-
+      const loginPayload = { identifier, password };
       const loginResponse = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/auth/login`,
         loginPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("Login response:", loginResponse.data);
-
       const token = loginResponse.data.access_token;
-      console.log("token", token);
-
-      // Set the token in cookies
       setCookie("token", token, {
         httpOnly: false,
         secure: process.env.NODE_ENV !== "development",
         expires: 3, // 3 days
       });
-      // Redirect to the home route after successful login
       router.push("/");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Login error response:", error.response?.data);
-        if (error.response?.data.message === "Email is not verified") {
+      // Check if the error is an AxiosError
+      if (error instanceof AxiosError) {
+        const errorMessage = error.response?.data.message;
+        setErrorMessage(errorMessage || "An error occurred during login.");
+
+        if (errorMessage === "Email is not verified") {
           setModalContent("Please verify your email.");
           setVerificationIdentifier(identifier);
           setIsEmailLogin(true);
           openModal(true);
-        } else if (error.response?.data.message === "Phone is not verified") {
+        } else if (errorMessage === "Phone is not verified") {
           setModalContent("Please verify your phone.");
           setVerificationIdentifier(identifier);
           setIsEmailLogin(false);
           openModal(true);
-        } else {
-          console.error("Error response:", error.response?.data);
         }
       } else {
         console.error("Unexpected error:", error);
+        setErrorMessage("Unexpected error occurred. Please try again.");
       }
     }
   };
@@ -130,76 +99,112 @@ const Login = () => {
     event.preventDefault();
     await handleLogin();
   };
-  // passowrd show and hide
-  const [showPassword, setShowPassword] = useState(false);
+
   const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+    setShowPassword((prev) => !prev);
   };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block mb-2 font-semibold text-gray-700">
+              <input
+                type="radio"
+                name="loginType"
+                value="email"
+                checked={isEmailLogin}
+                onChange={() => setIsEmailLogin(true)}
+                className="mr-2"
+              />
+              Email Login
+            </label>
+            <label className="block font-semibold text-gray-700">
+              <input
+                type="radio"
+                name="loginType"
+                value="phone"
+                checked={!isEmailLogin}
+                onChange={() => setIsEmailLogin(false)}
+                className="mr-2"
+              />
+              Phone Login
+            </label>
+          </div>
+          <div className="mb-4">
             <input
-              type="radio"
-              name="loginType"
-              value="email"
-              checked={isEmailLogin}
-              onChange={() => setIsEmailLogin(true)}
+              type="text"
+              name="identifier"
+              placeholder={isEmailLogin ? "Email" : "Phone"}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
-            Email Login
-          </label>
-          <label>
+          </div>
+          <div className="mb-4 relative">
             <input
-              type="radio"
-              name="loginType"
-              value="phone"
-              checked={!isEmailLogin}
-              onChange={() => setIsEmailLogin(false)}
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
-            Phone Login
-          </label>
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-3 text-sm text-blue-500">
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">
+            Login
+          </button>
+        </form>
+
+        {errorMessage && (
+          <Button
+            variant="flat"
+            color="danger"
+            className="capitalize mt-4"
+            style={{ color: "red" }}>
+            {errorMessage}
+          </Button>
+        )}
+
+        <div className="mt-4 text-center">
+          <Link href="/forget-password" className="text-sm text-blue-500">
+            Forget Password?
+          </Link>
         </div>
-        <input
-          type="text"
-          name="identifier"
-          placeholder={isEmailLogin ? "Email" : "Phone"}
-          onChange={handleInputChange}
-        />
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="Password"
-          onChange={handleInputChange}
-        />
-        <button type="button" onClick={togglePasswordVisibility}>
-          {showPassword ? "Hide" : "Show"}
-        </button>
-        <br />
-        <button type="submit">Login</button>
-      </form>
+      </div>
 
       {/* Verification Modal */}
-
       <CustomModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Verification Needed</h2>
+        <h2 className="text-xl font-semibold mb-4">Verification Needed</h2>
         <p>{modalContent}</p>
         <input
           type="text"
           placeholder={isEmailLogin ? "Enter your email" : "Enter your phone"}
           value={verificationIdentifier}
-          onChange={handleVerificationIdentifierChange}
+          onChange={(e) => setVerificationIdentifier(e.target.value)}
+          className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
         />
-
         <input
           type="text"
           placeholder="Enter verification code"
           value={verificationCode}
-          onChange={handleVerificationCodeChange}
+          onChange={(e) => setVerificationCode(e.target.value)}
+          className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
         />
-        <button onClick={handleVerify}>Submit</button>
+        <button
+          onClick={handleVerify}
+          className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">
+          Submit
+        </button>
       </CustomModal>
-      <Link href="/forget-password">Forget Password</Link>
     </div>
   );
 };
