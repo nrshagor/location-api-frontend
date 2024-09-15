@@ -24,6 +24,7 @@ const Register = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     email: "",
@@ -38,7 +39,10 @@ const Register = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setVerificationCode("");
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,12 +73,14 @@ const Register = () => {
       const response = await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log(response.data); // Log response for debugging
+
+      setErrors(response.data.message);
       closeModal();
+
       await handleLogin();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Verification error:", error.response?.data);
+        setErrors(error.response?.data);
       } else {
         console.error("Unexpected error:", error);
       }
@@ -145,6 +151,10 @@ const Register = () => {
   };
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prev) => !prev);
   };
 
   return (
@@ -275,6 +285,17 @@ const Register = () => {
                 onChange={handleVerificationCodeChange}
                 className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
               />
+
+              {errors && (
+                <Button
+                  variant="flat"
+                  color="danger"
+                  className="capitalize mt-4"
+                  style={{ color: "red" }}
+                >
+                  {errors}
+                </Button>
+              )}
             </ModalBody>
 
             <ModalFooter>
