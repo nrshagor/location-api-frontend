@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import axios from "axios";
 import { setCookie } from "cookie-handler-pro";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -162,7 +163,7 @@ const Register = () => {
       <div className="bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         <form onSubmit={handleRegister}>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block mb-2 font-semibold text-gray-700">
               <input
                 type="radio"
@@ -185,7 +186,7 @@ const Register = () => {
               />
               Phone Registration
             </label>
-          </div>
+          </div> */}
           <div className="mb-4">
             <input
               type="text"
@@ -264,6 +265,12 @@ const Register = () => {
           >
             {isRegistering ? "Registering..." : "Register"}{" "}
           </button>
+          <p className="mt-4 text-gray-400">
+            Already Have an Account. Please
+            <Link href="login" className="pl-1 underline text-blue-600">
+              Login
+            </Link>
+          </p>
         </form>
 
         <Modal isOpen={isModalOpen} onClose={closeModal}>

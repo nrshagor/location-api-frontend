@@ -119,7 +119,7 @@ const Login = () => {
       <div className="bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block mb-2 font-semibold text-gray-700">
               <input
                 type="radio"
@@ -142,7 +142,7 @@ const Login = () => {
               />
               Phone Login
             </label>
-          </div>
+          </div> */}
           <div className="mb-4">
             <input
               type="text"
@@ -163,13 +163,15 @@ const Login = () => {
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-3 top-3 text-sm text-blue-500">
+              className="absolute right-3 top-3 text-sm text-blue-500"
+            >
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+          >
             Login
           </button>
         </form>
@@ -179,7 +181,8 @@ const Login = () => {
             variant="flat"
             color="danger"
             className="capitalize mt-4"
-            style={{ color: "red" }}>
+            style={{ color: "red" }}
+          >
             {errorMessage}
           </Button>
         )}
@@ -189,6 +192,12 @@ const Login = () => {
             Forget Password?
           </Link>
         </div>
+        <p className="mt-4 text-gray-400">
+          Don&apos;t Have an Account. Please
+          <Link href="register" className="pl-1 underline text-blue-600">
+            Register
+          </Link>
+        </p>
       </div>
 
       <>
