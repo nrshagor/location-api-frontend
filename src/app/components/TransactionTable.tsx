@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   Tooltip,
+  Select,
 } from "@nextui-org/react";
 
 interface Transaction {
@@ -86,22 +87,20 @@ const TransactionTable: React.FC = () => {
     });
   };
 
-  const handleLimitChange = (newLimit: string) => {
-    const numericLimit = parseInt(newLimit, 10);
-    if (!isNaN(numericLimit)) {
-      setLimit(numericLimit);
-    }
+  const handleLimitChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newLimit = parseInt(e.target.value, 10);
+    setLimit(newLimit);
   };
 
   const openModal = (transaction: Transaction) => {
     setTransactionToVerify(transaction);
     setSuccessMessage("");
-    // setTransactionIdInput(transaction.transactionId); // Pre-fill with transaction ID
-    setIsOpen(true); // Open the modal
+    setTransactionIdInput(transaction.transactionId);
+    setIsOpen(true);
   };
 
   const handleVerifySubmit = async () => {
-    setIsSubmitting(true); // Set loading state
+    setIsSubmitting(true);
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/transaction/verify`,
@@ -114,19 +113,19 @@ const TransactionTable: React.FC = () => {
         setSuccessMessage("Transaction verified successfully");
         fetchTransactions();
         setTimeout(() => {
-          setIsOpen(false); // Close modal after success
+          setIsOpen(false);
         }, 1500);
       }
     } catch (error) {
       console.error("Error verifying transaction:", error);
       setSuccessMessage("Invalid transaction ID or verification failed");
     } finally {
-      setIsSubmitting(false); // End loading state
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div>
+    <div className="flex min-h-screen flex-col items-center justify-start p-24">
       <h1>Transaction Table</h1>
 
       {/* Filters */}
@@ -203,7 +202,16 @@ const TransactionTable: React.FC = () => {
           </TableBody>
         </Table>
       )}
-
+      <div className="flex gap-4 mb-4">
+        <label htmlFor="limit">Rows per page:</label>
+        <select id="limit" value={limit} onChange={handleLimitChange}>
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+      </div>
       {/* Modal for Verification */}
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <ModalContent>
@@ -218,7 +226,7 @@ const TransactionTable: React.FC = () => {
             {successMessage && (
               <Button
                 color={
-                  successMessage == "Transaction verified successfully"
+                  successMessage === "Transaction verified successfully"
                     ? "success"
                     : "danger"
                 }
