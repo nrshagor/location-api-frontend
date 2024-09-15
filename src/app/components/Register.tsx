@@ -1,5 +1,13 @@
 "use client";
 import CustomModal from "@/app/components/CustomModal";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from "@nextui-org/react";
 import axios from "axios";
 import { setCookie } from "cookie-handler-pro";
 import { useRouter } from "next/navigation";
@@ -11,16 +19,10 @@ const Register = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [verificationEmail, setVerificationEmail] = useState("");
-  const [verificationPhone, setVerificationPhone] = useState("");
+  const [verificationIdentifier, setVerificationIdentifier] = useState("");
   const [errors, setErrors] = useState("");
-  const openModal = (content: any) => {
-    setModalContent(content);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => setIsModalOpen(false);
-
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     email: "",
@@ -29,15 +31,21 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const openModal = () => {
+    const identifier = emailRegistration ? formData.email : formData.phone;
+    setVerificationIdentifier(identifier); // Set the identifier value
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    if (name == "password") {
-      if (formData.password.length < 5) {
-        setErrors("Password must be at least 6 characters");
-      } else {
-        setErrors("");
-      }
+    if (name == "password" && value.length < 6) {
+      setErrors("Password must be at least 6 characters");
+    } else {
+      setErrors("");
     }
   };
 
@@ -46,78 +54,31 @@ const Register = () => {
   ) => {
     setVerificationCode(e.target.value);
   };
+  const handleVerification = async () => {
+    setIsVerifying(true);
+    const url = emailRegistration
+      ? `${process.env.NEXT_PUBLIC_URL}/auth/verify-email`
+      : `${process.env.NEXT_PUBLIC_URL}/auth/verify-phone`;
 
-  const handleVerificationEmailChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setVerificationEmail(e.target.value);
-  };
+    const payload = emailRegistration
+      ? { email: verificationIdentifier, verificationCode }
+      : { phone: verificationIdentifier, verificationCode };
 
-  const handleVerificationPhoneChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setVerificationPhone(e.target.value);
-  };
-
-  const handleVerifyEmail = async () => {
     try {
-      const payload = {
-        email: verificationEmail,
-        verificationCode,
-      };
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/auth/verify-email`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Email verified successfully:", response.data);
+      const response = await axios.post(url, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log(response.data); // Log response for debugging
       closeModal();
-
-      // Try to login again after email verification
       await handleLogin();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Error response:", error.response?.data);
+        console.error("Verification error:", error.response?.data);
       } else {
         console.error("Unexpected error:", error);
       }
-    }
-  };
-
-  const handleVerifyPhone = async () => {
-    try {
-      const payload = {
-        phone: verificationPhone,
-        verificationCode,
-      };
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/auth/verify-phone`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Phone verified successfully:", response.data);
-      closeModal();
-
-      // Try to login again after phone verification
-      await handleLogin();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Error response:", error.response?.data);
-      } else {
-        console.error("Unexpected error:", error);
-      }
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -128,190 +89,182 @@ const Register = () => {
         password: formData.password,
       };
 
-      console.log("Sending login request with payload:", loginPayload);
-
       const loginResponse = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/auth/login`,
         loginPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("Login response:", loginResponse.data);
-
       const token = loginResponse.data.access_token;
-      console.log("token", token);
-
-      // Set the token in cookies
       setCookie("token", token, {
         httpOnly: false,
         secure: process.env.NODE_ENV !== "development",
-        expires: 3, // 3 days
+        expires: 3,
       });
       router.push("/");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Login error response:", error.response?.data);
-        if (error.response?.data.message === "Email is not verified") {
-          setModalContent("Please verify your email.");
-          setVerificationEmail(emailRegistration ? formData.email : "");
-          openModal(true);
-        } else if (error.response?.data.message === "Phone is not verified") {
-          setModalContent("Please verify your phone.");
-          setVerificationPhone(!emailRegistration ? formData.phone : "");
-          openModal(true);
-        } else {
-          console.error("Error response:", error.response?.data);
-        }
-      } else {
-        console.error("Unexpected error:", error);
-      }
+      console.error("Login error:", error);
+      openModal();
     }
   };
 
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
-    try {
-      const payload = {
-        firstName: formData.firstName,
-        email: emailRegistration ? formData.email : undefined,
-        phone: emailRegistration ? undefined : formData.phone,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        role: "user", // Ensure role is passed correctly
-      };
+    setIsRegistering(true); // Start loading
+    const payload = {
+      firstName: formData.firstName,
+      email: emailRegistration ? formData.email : undefined,
+      phone: emailRegistration ? undefined : formData.phone,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+      role: "user",
+    };
 
-      // Register the user
-      const registerResponse = await axios.post(
+    try {
+      await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/auth/register`,
         payload,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
-
-      console.log("Registration successful:", registerResponse.data);
-
-      // Try to login after registration
       await handleLogin();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error(
-          "Registration error response:",
-          error.response?.data.message
-        );
-        const isArray = Array.isArray(error.response?.data.message);
-        if (!isArray) {
-          setErrors(error.response?.data.message);
-        } else {
-          setErrors(error.response?.data.message[0]);
-        }
+        const message = Array.isArray(error.response?.data.message)
+          ? error.response?.data.message[0]
+          : error.response?.data.message;
+        setErrors(message);
       } else {
         console.error("Unexpected error:", error);
       }
+    } finally {
+      setIsRegistering(false); // Stop loading
     }
   };
 
-  console.log(formData); // Log form data to check input values
   return (
-    <div>
-      <div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         <form onSubmit={handleRegister}>
-          <div>
-            <label>
+          <div className="mb-4">
+            <label className="block mb-2 font-semibold text-gray-700">
               <input
                 type="radio"
                 name="registrationType"
                 value="email"
                 checked={emailRegistration}
                 onChange={() => setEmailRegistration(true)}
+                className="mr-2"
               />
               Email Registration
             </label>
-
-            <label>
+            <label className="block font-semibold text-gray-700">
               <input
                 type="radio"
                 name="registrationType"
                 value="phone"
                 checked={!emailRegistration}
                 onChange={() => setEmailRegistration(false)}
+                className="mr-2"
               />
               Phone Registration
             </label>
           </div>
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            onChange={handleInputChange}
-          />
-          {emailRegistration ? (
+          <div className="mb-4">
             <input
-              type="email"
-              name="email"
-              placeholder="Email"
+              type="text"
+              name="firstName"
+              placeholder="First Name"
               onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
-          ) : (
+          </div>
+          <div className="mb-4">
+            {emailRegistration ? (
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+              />
+            ) : (
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone"
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+              />
+            )}
+          </div>
+          <div className="mb-4">
             <input
-              type="tel"
-              name="phone"
-              placeholder="Phone"
+              type="password"
+              name="password"
+              placeholder="Password"
               onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
-          )}
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleInputChange}
-          />
-          {errors && <p style={{ color: "red" }}>{errors}</p>}
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            onChange={handleInputChange}
-          />
-          <button type="submit">Sign Up</button>
+            {errors && <p className="text-red-500 text-sm">{errors}</p>}
+          </div>
+          <div className="mb-4">
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+            disabled={isRegistering} // Disable button during loading
+          >
+            {isRegistering ? "Registering..." : "Register"}{" "}
+          </button>
         </form>
+
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <ModalContent>
+            <ModalHeader className="flex flex-col gap-1">
+              Verification Needed
+            </ModalHeader>
+            <ModalBody>
+              <input
+                type={emailRegistration ? "email" : "tel"}
+                value={verificationIdentifier} // Show the identifier (email/phone)
+                readOnly // Make it read-only
+                className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+              />
+              <input
+                type="text"
+                placeholder="Enter verification code"
+                value={verificationCode}
+                onChange={handleVerificationCodeChange}
+                className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+              />
+            </ModalBody>
+
+            <ModalFooter>
+              <Button color="danger" variant="light" onClick={closeModal}>
+                Close
+              </Button>
+              <Button
+                color="primary"
+                onClick={handleVerification}
+                isDisabled={isVerifying} // Disable button during loading
+              >
+                {isVerifying ? "Submitting..." : "Submit"}{" "}
+                {/* Change text during loading */}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
-      <CustomModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Verification Needed</h2>
-        <p>{modalContent}</p>
-        {emailRegistration ? (
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={verificationEmail}
-            onChange={handleVerificationEmailChange}
-          />
-        ) : (
-          <input
-            type="tel"
-            placeholder="Enter your phone"
-            value={verificationPhone}
-            onChange={handleVerificationPhoneChange}
-          />
-        )}
-        <input
-          type="text"
-          placeholder="Enter verification code"
-          value={verificationCode}
-          onChange={handleVerificationCodeChange}
-        />
-        <button
-          onClick={emailRegistration ? handleVerifyEmail : handleVerifyPhone}
-        >
-          Submit
-        </button>
-      </CustomModal>
     </div>
   );
 };
