@@ -1,6 +1,15 @@
 "use client";
 import CustomModal from "@/app/components/CustomModal";
-import { Button } from "@nextui-org/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
+
 import axios, { AxiosError } from "axios";
 import { setCookie } from "cookie-handler-pro";
 import Link from "next/link";
@@ -19,6 +28,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const openModal = (content: any) => {
     setModalContent(content);
     setIsModalOpen(true);
@@ -181,30 +191,46 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Verification Modal */}
-      <CustomModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2 className="text-xl font-semibold mb-4">Verification Needed</h2>
-        <p>{modalContent}</p>
-        <input
-          type="text"
-          placeholder={isEmailLogin ? "Enter your email" : "Enter your phone"}
-          value={verificationIdentifier}
-          onChange={(e) => setVerificationIdentifier(e.target.value)}
-          className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
-        />
-        <input
-          type="text"
-          placeholder="Enter verification code"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
-          className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
-        />
-        <button
-          onClick={handleVerify}
-          className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">
-          Submit
-        </button>
-      </CustomModal>
+      <>
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Verification Needed
+                </ModalHeader>
+                <ModalBody>
+                  <input
+                    readOnly
+                    type="text"
+                    placeholder={
+                      isEmailLogin ? "Enter your email" : "Enter your phone"
+                    }
+                    value={verificationIdentifier}
+                    onChange={(e) => setVerificationIdentifier(e.target.value)}
+                    className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Enter verification code"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onClick={closeModal}>
+                    Close
+                  </Button>
+                  <Button color="primary" onClick={handleVerify}>
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      </>
     </div>
   );
 };
