@@ -1,6 +1,22 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
-import CustomModal from "./CustomModal"; // Import the modal component
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Pagination,
+  Input,
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Tooltip,
+} from "@nextui-org/react";
 
 interface Transaction {
   id: number;
@@ -28,11 +44,13 @@ const TransactionTable: React.FC = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  // Manage modal state manually
+  const [isOpen, setIsOpen] = useState(false);
   const [transactionToVerify, setTransactionToVerify] =
     useState<Transaction | null>(null);
-  const [transactionIdInput, setTransactionIdInput] = useState<string>(""); // State to store input value
+  const [transactionIdInput, setTransactionIdInput] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     fetchTransactions();
@@ -76,39 +94,35 @@ const TransactionTable: React.FC = () => {
   };
 
   const openModal = (transaction: Transaction) => {
-    setTransactionToVerify(transaction); // Set the correct transaction
-    // Pre-fill the input field with the transaction ID
-    setSuccessMessage(""); // Clear previous success messages
-    setModalOpen(true);
+    setTransactionToVerify(transaction);
+    setSuccessMessage("");
+    // setTransactionIdInput(transaction.transactionId); // Pre-fill with transaction ID
+    setIsOpen(true); // Open the modal
   };
 
   const handleVerifySubmit = async () => {
+    setIsSubmitting(true); // Set loading state
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/transaction/verify`,
         {
-          transactionId: transactionIdInput, // Use the input value from the modal
+          transactionId: transactionIdInput,
         }
       );
 
       if (response.status === 200 || response.status === 201) {
         setSuccessMessage("Transaction verified successfully");
-        fetchTransactions(); // Refresh transactions after verification
+        fetchTransactions();
         setTimeout(() => {
-          closeModal(); // Close modal after success with a delay
+          setIsOpen(false); // Close modal after success
         }, 1500);
       }
     } catch (error) {
       console.error("Error verifying transaction:", error);
       setSuccessMessage("Invalid transaction ID or verification failed");
+    } finally {
+      setIsSubmitting(false); // End loading state
     }
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setTransactionToVerify(null); // Clear the selected transaction
-    setTransactionIdInput(""); // Clear the input value
-    setSuccessMessage(""); // Clear success message
   };
 
   return (
@@ -116,121 +130,119 @@ const TransactionTable: React.FC = () => {
       <h1>Transaction Table</h1>
 
       {/* Filters */}
-      <div>
-        <input
-          type="text"
-          name="accountNumber"
+      <div className="flex gap-4 mb-4">
+        <Input
           placeholder="Account Number"
+          name="accountNumber"
           value={filters.accountNumber}
           onChange={handleFilterChange}
         />
-        <input
-          type="text"
-          name="transactionId"
+        <Input
           placeholder="Transaction ID"
+          name="transactionId"
           value={filters.transactionId}
           onChange={handleFilterChange}
         />
-        <input
-          type="text"
-          name="transactionType"
+        <Input
           placeholder="Transaction Type"
+          name="transactionType"
           value={filters.transactionType}
           onChange={handleFilterChange}
         />
-        <button onClick={fetchTransactions}>Filter</button>
+        <Button onPress={fetchTransactions}>Filter</Button>
       </div>
 
       {/* Table */}
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table border={1} cellPadding="10">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Account Number</th>
-              <th>Transaction ID</th>
-              <th>Transaction Type</th>
-              <th>Amount</th>
-              <th>Verified</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.length > 0 ? (
-              transactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td>{transaction.id}</td>
-                  <td>{transaction.accountNumber}</td>
-                  <td>{transaction.transactionId}</td>
-                  <td>{transaction.transactionType}</td>
-                  <td>{transaction.amount}</td>
-                  <td>{transaction.isVerify ? "Yes" : "No"}</td>
-                  <td>
-                    {!transaction.isVerify ? (
-                      <button onClick={() => openModal(transaction)}>
-                        Verify
-                      </button>
-                    ) : (
-                      "Verified"
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7}>No transactions found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <Table
+          aria-label="Transaction table"
+          bottomContent={
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                page={page}
+                total={Math.ceil(total / limit)}
+                onChange={setPage}
+              />
+            </div>
+          }>
+          <TableHeader>
+            <TableColumn>ID</TableColumn>
+            <TableColumn>Account Number</TableColumn>
+            <TableColumn>Transaction ID</TableColumn>
+            <TableColumn>Transaction Type</TableColumn>
+            <TableColumn>Amount</TableColumn>
+            <TableColumn>Verified</TableColumn>
+            <TableColumn>Actions</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {transactions.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell>{transaction.id}</TableCell>
+                <TableCell>{transaction.accountNumber}</TableCell>
+                <TableCell>{transaction.transactionId}</TableCell>
+                <TableCell>{transaction.transactionType}</TableCell>
+                <TableCell>{transaction.amount}</TableCell>
+                <TableCell>{transaction.isVerify ? "Yes" : "No"}</TableCell>
+                <TableCell>
+                  {transaction.isVerify ? (
+                    <Button isDisabled color="primary" variant="flat">
+                      Verified
+                    </Button>
+                  ) : (
+                    <Button onPress={() => openModal(transaction)}>
+                      Verify
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
 
-      {/* Pagination */}
-      <div>
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
-          Previous
-        </button>
-        <span>{` Page ${page} of ${Math.ceil(total / limit)} `}</span>
-        <button
-          onClick={() =>
-            setPage((prev) => (prev * limit < total ? prev + 1 : prev))
-          }
-          disabled={page * limit >= total}
-        >
-          Next
-        </button>
-
-        {/* Limit selection */}
-        <div>
-          <label>Items per page: </label>
-          <select
-            value={limit}
-            onChange={(e) => handleLimitChange(e.target.value)}
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-          </select>
-        </div>
-      </div>
-
       {/* Modal for Verification */}
-      <CustomModal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Verify Transaction</h2>
-        <input
-          type="text"
-          value={transactionIdInput} // Editable input field
-          onChange={(e) => setTransactionIdInput(e.target.value)} // Update the input value
-          placeholder="Enter Transaction ID"
-        />
-        <button onClick={handleVerifySubmit}>Submit</button>
-        {successMessage && <p>{successMessage}</p>}
-      </CustomModal>
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+        <ModalContent>
+          <ModalHeader>Verify Transaction</ModalHeader>
+          <ModalBody>
+            <Input
+              placeholder="Enter Transaction ID"
+              value={transactionIdInput}
+              onChange={(e) => setTransactionIdInput(e.target.value)}
+            />
+
+            {successMessage && (
+              <Button
+                color={
+                  successMessage == "Transaction verified successfully"
+                    ? "success"
+                    : "danger"
+                }
+                variant="flat">
+                <p>{successMessage}</p>
+              </Button>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="danger"
+              variant="light"
+              onPress={() => setIsOpen(false)}>
+              Close
+            </Button>
+            <Button
+              color="primary"
+              isLoading={isSubmitting}
+              onPress={handleVerifySubmit}>
+              {isSubmitting ? "Loading..." : "Submit"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
