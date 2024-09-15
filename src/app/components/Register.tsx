@@ -23,6 +23,7 @@ const Register = () => {
   const [errors, setErrors] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     email: "",
@@ -142,6 +143,9 @@ const Register = () => {
       setIsRegistering(false); // Stop loading
     }
   };
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -200,24 +204,48 @@ const Register = () => {
               />
             )}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               onChange={handleInputChange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
-            {errors && <p className="text-red-500 text-sm">{errors}</p>}
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-3 text-sm text-blue-500"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+
+            {errors && (
+              <Button
+                variant="flat"
+                color="danger"
+                className="capitalize mt-4"
+                style={{ color: "red" }}
+              >
+                {errors}
+              </Button>
+            )}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm Password"
               onChange={handleInputChange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-3 text-sm text-blue-500"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
           </div>
           <button
             type="submit"
