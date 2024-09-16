@@ -111,7 +111,7 @@ const Page: React.FC = () => {
 
               <div className="mt-4 w-full">
                 <h3 className="text-lg font-medium">Response</h3>
-                <Card className="mt-2 p-4 bg-gray-100 w-full max-w-lg mx-auto rounded-md">
+                <Card className="mt-2 p-4 bg-gray-100 md:w-screen w-full max-w-lg mx-auto rounded-md">
                   {error[api.name] ? (
                     <p className="text-red-500">{error[api.name]}</p>
                   ) : apiData[api.name] ? (
