@@ -167,7 +167,15 @@ const DomainInfo = () => {
                 </p>
                 <p>
                   <span className="font-semibold">End Date:</span>{" "}
-                  {singleDomain.endDate}
+                  {new Date(singleDomain.endDate).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: true, // This will format the time in 12-hour format with AM/PM
+                  })}
                 </p>
 
                 <div className="flex space-x-2 mt-4">
