@@ -12,7 +12,7 @@ interface plans {
   id: 1;
   name: string;
   price: number;
-  regularPricces: number;
+  regularPrices: number;
   discount: number;
   currentPrice: number;
   tag: string;
@@ -116,17 +116,20 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
       <div className="groupBtn">
         <button
           className={monthyOrYear === 1 ? "active" : ""}
-          onClick={() => isMonthly(1)}>
+          onClick={() => isMonthly(1)}
+        >
           Monthly
         </button>
         <button
           className={monthyOrYear === 12 ? "active" : ""}
-          onClick={() => isMonthly(12)}>
+          onClick={() => isMonthly(12)}
+        >
           Yearly
         </button>
         <button
           className={monthyOrYear === 24 ? "active" : ""}
-          onClick={() => isMonthly(24)}>
+          onClick={() => isMonthly(24)}
+        >
           Two Yearly
         </button>
       </div>
@@ -143,7 +146,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
                     {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
                   </p>
                   <p>Duration In Months: {plan.durationInMonths}</p>
-                  <p>Regular Prices: {plan.regularPricces}</p>
+                  <p>Regular Prices: {plan.regularPrices} Taka</p>
                   <p>Discount: {plan.discount}%</p>
                   <p>Current Price: {plan.currentPrice}</p>
                 </div>
@@ -158,7 +161,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
                     {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
                   </p>
                   <p>Duration In Months: {plan.durationInMonths}</p>
-                  <p>Regular Prices: {plan.regularPricces}</p>
+                  <p>Regular Prices: {plan.regularPrices} Taka</p>
                   <p>Discount: {plan.discount}%</p>
                   <p>Current Price: {plan.currentPrice}</p>
                 </div>
@@ -185,7 +188,8 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
             <p>Plan Amount: {amount}</p>
             <select
               value={transactionType}
-              onChange={handleTransactionTypeChange}>
+              onChange={handleTransactionTypeChange}
+            >
               <option value="bkash">Bkash</option>
               <option value="bank">Bank</option>
             </select>

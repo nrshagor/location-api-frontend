@@ -95,7 +95,7 @@ const TransactionTable: React.FC = () => {
   const openModal = (transaction: Transaction) => {
     setTransactionToVerify(transaction);
     setSuccessMessage("");
-    setTransactionIdInput(transaction.transactionId);
+    // setTransactionIdInput(transaction.transactionId);
     setIsOpen(true);
   };
 
@@ -167,7 +167,8 @@ const TransactionTable: React.FC = () => {
                 onChange={setPage}
               />
             </div>
-          }>
+          }
+        >
           <TableHeader>
             <TableColumn>ID</TableColumn>
             <TableColumn>Account Number</TableColumn>
@@ -230,7 +231,8 @@ const TransactionTable: React.FC = () => {
                     ? "success"
                     : "danger"
                 }
-                variant="flat">
+                variant="flat"
+              >
                 <p>{successMessage}</p>
               </Button>
             )}
@@ -239,13 +241,15 @@ const TransactionTable: React.FC = () => {
             <Button
               color="danger"
               variant="light"
-              onPress={() => setIsOpen(false)}>
+              onPress={() => setIsOpen(false)}
+            >
               Close
             </Button>
             <Button
               color="primary"
               isLoading={isSubmitting}
-              onPress={handleVerifySubmit}>
+              onPress={handleVerifySubmit}
+            >
               {isSubmitting ? "Loading..." : "Submit"}
             </Button>
           </ModalFooter>

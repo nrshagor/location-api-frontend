@@ -93,11 +93,11 @@ const SubscriptionPlan = () => {
                   Duration: {plan.durationInMonths} months
                 </p>
                 <p className="text-gray-600 mb-2">
-                  Regular Price: ${plan.regularPrices}
+                  Regular Price: {plan.regularPrices} Taka
                 </p>
                 <p className="text-gray-600 mb-2">Discount: {plan.discount}%</p>
                 <p className="text-lg font-bold text-gray-800">
-                  Current Price: ${plan.currentPrice}
+                  Current Price: {plan.currentPrice} Taka
                 </p>
               </div>
             )

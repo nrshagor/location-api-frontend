@@ -48,6 +48,7 @@ const BasicInfo: React.FC = () => {
   });
 
   const userId = auth()?.sub;
+
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [multipleFiles, setMultipleFiles] = useState<File[]>([]);
@@ -73,6 +74,7 @@ const BasicInfo: React.FC = () => {
           });
 
           const userData = response.data;
+          console.log(userData);
           setFormData({
             firstName: userData.firstName,
             lastname: userData.lastname,
@@ -150,10 +152,10 @@ const BasicInfo: React.FC = () => {
 
       fetchDistricts();
     } else {
-      setDistricts([]);
-      setThanas([]);
+      // setDistricts([]);
+      // setThanas([]);
     }
-  }, [formData.division]);
+  }, [formData.division]); // Ensure districts are updated when division is set
 
   useEffect(() => {
     if (formData.district) {
@@ -178,7 +180,7 @@ const BasicInfo: React.FC = () => {
     } else {
       setThanas([]);
     }
-  }, [formData.district]);
+  }, [formData.district]); // Ensure thanas are updated when district is set
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -223,7 +225,7 @@ const BasicInfo: React.FC = () => {
       const token = getCookie("token");
 
       // Update user information
-      const response = await axios.put(url, payload, {
+      const response = await axios.patch(url, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -239,7 +241,7 @@ const BasicInfo: React.FC = () => {
 
         const uploadUrl = `${process.env.NEXT_PUBLIC_URL}/auth/update-profile-picture`;
 
-        const uploadResponse = await axios.put(uploadUrl, formData, {
+        const uploadResponse = await axios.patch(uploadUrl, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -268,7 +270,7 @@ const BasicInfo: React.FC = () => {
 
         const multipleUploadUrl = `${process.env.NEXT_PUBLIC_URL}/auth/update-profile-pictures`;
 
-        const multipleUploadResponse = await axios.put(
+        const multipleUploadResponse = await axios.patch(
           multipleUploadUrl,
           multipleFormData,
           {
@@ -300,26 +302,32 @@ const BasicInfo: React.FC = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First Name"
-          value={formData.firstName}
-          onChange={handleInputChange}
-        />
-        <input
-          type="text"
-          name="lastname"
-          placeholder="Last Name"
-          value={formData.lastname}
-          onChange={handleInputChange}
-        />
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            name="lastname"
+            placeholder="Last Name"
+            value={formData.lastname}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
         <select
           name="countries"
           value={formData.countries}
           onChange={handleInputChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select Country</option>
           {countries.map((country) => (
@@ -328,133 +336,159 @@ const BasicInfo: React.FC = () => {
             </option>
           ))}
         </select>
-        <select
-          name="division"
-          value={formData.division}
-          onChange={handleInputChange}
-          disabled={!formData.countries}
-        >
-          <option value="">Select Division</option>
-          {divisions.map((division) => (
-            <option key={division.value} value={division.value}>
-              {division.label}
-            </option>
-          ))}
-        </select>
-        <select
-          name="district"
-          value={formData.district}
-          onChange={handleInputChange}
-          disabled={!formData.division}
-        >
-          <option value="">Select District</option>
-          {districts.map((district) => (
-            <option key={district.value} value={district.value}>
-              {district.label}
-            </option>
-          ))}
-        </select>
-        <select
-          name="thana"
-          value={formData.thana}
-          onChange={handleInputChange}
-          disabled={!formData.district}
-        >
-          <option value="">Select Thana</option>
-          {thanas.map((thana) => (
-            <option key={thana.value} value={thana.value}>
-              {thana.label}
-            </option>
-          ))}
-        </select>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <select
+            name="division"
+            value={formData.division} // Ensure the value is tied to the state
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Division</option>
+            {divisions.map((division) => (
+              <option key={division.value} value={division.value}>
+                {division.label}
+              </option>
+            ))}
+          </select>
+
+          {/* District Dropdown */}
+          <select
+            name="district"
+            value={formData.district} // Ensure the value is tied to the state
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select District</option>
+            {districts.map((district) => (
+              <option key={district.value} value={district.value}>
+                {district.label}
+              </option>
+            ))}
+          </select>
+
+          {/* Thana Dropdown */}
+          <select
+            name="thana"
+            value={formData.thana} // Ensure the value is tied to the state
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Thana</option>
+            {thanas.map((thana) => (
+              <option key={thana.value} value={thana.value}>
+                {thana.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <input
           type="text"
           name="postalCode"
           placeholder="Postal Code"
           value={formData.postalCode}
           onChange={handleInputChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+
         <input
           type="text"
           name="buildingAddress"
           placeholder="Building Address"
           value={formData.buildingAddress}
           onChange={handleInputChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <input
-          type="file"
-          name="profilePictureUrl"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        {previewUrl && (
-          <div>
-            <Image
-              src={previewUrl}
-              alt="Profile Preview"
-              width={100}
-              height={100}
-              style={{ width: "100px", height: "100px", objectFit: "cover" }}
-            />
-          </div>
-        )}
+
+        <div className="flex items-center space-x-4">
+          <input
+            type="file"
+            name="profilePictureUrl"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="border border-gray-300 rounded-md"
+          />
+          {previewUrl && (
+            <div className="w-24 h-24">
+              <Image
+                src={previewUrl}
+                alt="Profile Preview"
+                width={96}
+                height={96}
+                className="object-cover rounded-md"
+              />
+            </div>
+          )}
+        </div>
+
         <input
           type="file"
           name="files"
           accept="image/*"
           multiple
           onChange={handleMultipleFileChange}
+          className="border border-gray-300 rounded-md"
         />
-        {multiplePreviewUrls?.length > 0 && (
-          <div>
+
+        {multiplePreviewUrls.length > 0 && (
+          <div className="flex space-x-2">
             {multiplePreviewUrls.map((url, index) => (
               <Image
                 key={index}
                 src={url}
                 alt={`Preview ${index}`}
-                width={100}
-                height={100}
-                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                width={96}
+                height={96}
+                className="object-cover rounded-md"
               />
             ))}
           </div>
         )}
-        <button type="submit">Submit</button>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Submit
+        </button>
       </form>
-      <div>
-        <p>Single image:</p>
-        <Image
-          src={
-            `${process.env.NEXT_PUBLIC_URL}/${formData?.profilePictureUrl}` &&
-            `/`
-          }
-          alt="Profile"
-          width={100}
-          height={100}
-          style={{ width: "100px", height: "100px", objectFit: "cover" }}
-        />
+
+      <div className="mt-6">
+        <p className="font-semibold">Single Image:</p>
+        {formData.profilePictureUrl && (
+          <Image
+            src={`${process.env.NEXT_PUBLIC_URL}/${formData.profilePictureUrl}`}
+            alt="Profile"
+            width={96}
+            height={96}
+            className="object-cover rounded-md"
+          />
+        )}
       </div>
-      <div>
-        <p>Multiple images:</p>
-        <div>
+
+      <div className="mt-6">
+        <p className="font-semibold">Multiple Images:</p>
+        <div className="flex space-x-2">
           {uploadedImageUrls.map((url, index) => (
             <Image
               key={index}
               src={`${process.env.NEXT_PUBLIC_URL}/${url}`}
               alt={`Uploaded ${index}`}
-              width={100}
-              height={100}
-              style={{
-                width: "100px",
-                height: "100px",
-                objectFit: "cover",
-                margin: "5px",
-              }}
+              width={96}
+              height={96}
+              className="object-cover rounded-md"
             />
           ))}
         </div>
       </div>
-      <Link href="change-password">change-password</Link>
+
+      <Link
+        href="/dashboard/change-password"
+        className="mt-4 text-blue-500 underline"
+      >
+        Change Password
+      </Link>
     </div>
   );
 };
