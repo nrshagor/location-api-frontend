@@ -39,14 +39,14 @@ const SubscriptionPlan = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-center p-4 font-bold text-5xl text-gray-600">
+      <h2 className="text-center p-4 font-bold md:text-5xl text-large text-gray-600">
         {" "}
         API SUSCRIPTION PLAN{" "}
       </h2>
       {/* Plan Duration Selection */}
       <div className="flex justify-center mb-8 space-x-4">
         <button
-          className={`px-4 py-2 text-white rounded-lg transition duration-300 ${
+          className={`md:px-4 px-2 py-2 text-white rounded-lg transition duration-300 ${
             monthlyOrYear === 1
               ? "bg-blue-500"
               : "bg-gray-300 hover:bg-blue-500"

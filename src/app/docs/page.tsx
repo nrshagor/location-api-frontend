@@ -6,19 +6,89 @@ import { FaBarsStaggered } from "react-icons/fa6";
 // List of APIs with titles and descriptions
 const apiList = [
   {
-    name: "Districts",
-    url: "http://localhost:3000/districts/",
-    description: "This API fetches the list of districts.",
-  },
-  {
     name: "Countries",
-    url: "http://localhost:3000/countries/",
-    description: "This API fetches the list of countries.",
+    url: "http://localhost:3000/countries",
+    description: "Fetches the list of all countries.",
   },
   {
-    name: "State",
+    name: "Country by ID",
+    url: "http://localhost:3000/countries/1",
+    description: "Fetches details of the country with ID 1.",
+  },
+  {
+    name: "Country by name_bn",
+    url: "http://localhost:3000/countries/বাংলাদেশ",
+    description: "Fetches details of the country with Bengali name 'বাংলাদেশ'.",
+  },
+  {
+    name: "Country by name_en",
+    url: "http://localhost:3000/countries/Bangladesh",
+    description:
+      "Fetches details of the country with English name 'Bangladesh'.",
+  },
+  {
+    name: "Districts",
+    url: "http://localhost:3000/districts",
+    description: "Fetches the list of all districts.",
+  },
+  {
+    name: "District by ID",
+    url: "http://localhost:3000/districts/5",
+    description: "Fetches details of the district with ID 5.",
+  },
+  {
+    name: "District by name_bn",
+    url: "http://localhost:3000/districts/কিশোরগঞ্জ",
+    description:
+      "Fetches details of the district with Bengali name 'কিশোরগঞ্জ'.",
+  },
+  {
+    name: "District by name_en",
+    url: "http://localhost:3000/districts/Kishoreganj",
+    description:
+      "Fetches details of the district with English name 'Kishoreganj'.",
+  },
+  {
+    name: "Subdistricts",
+    url: "http://localhost:3000/subdistrict",
+    description: "Fetches the list of all subdistricts.",
+  },
+  {
+    name: "Subdistrict by ID",
+    url: "http://localhost:3000/subdistrict/124",
+    description: "Fetches details of the subdistrict with ID 124.",
+  },
+  {
+    name: "Subdistrict by name_bn",
+    url: "http://localhost:3000/subdistrict/রাজবাড়ী সদর",
+    description:
+      "Fetches details of the subdistrict with Bengali name 'রাজবাড়ী সদর'.",
+  },
+  {
+    name: "Subdistrict by name_en",
+    url: "http://localhost:3000/subdistrict/Rajbari Sadar",
+    description:
+      "Fetches details of the subdistrict with English name 'Rajbari Sadar'.",
+  },
+  {
+    name: "States",
     url: "http://localhost:3000/state",
-    description: "This API fetches the list of states.",
+    description: "Fetches the list of all states.",
+  },
+  {
+    name: "State by ID",
+    url: "http://localhost:3000/state/4",
+    description: "Fetches details of the state with ID 4.",
+  },
+  {
+    name: "State by name_bn",
+    url: "http://localhost:3000/state/খুলনা",
+    description: "Fetches details of the state with Bengali name 'খুলনা'.",
+  },
+  {
+    name: "State by name_en",
+    url: "http://localhost:3000/state/Khulna",
+    description: "Fetches details of the state with English name 'Khulna'.",
   },
 ];
 
@@ -56,8 +126,8 @@ const Page: React.FC = () => {
       {/* Mobile Toggle Button */}
       <div className="p-4  shadow-lg md:hidden flex justify-between fixed bg-white z-10 items-center w-full">
         <h1 className="text-2xl font-bold">API Documentation</h1>
-        <Button onPress={toggleSidebar}>
-          <FaBarsStaggered size={24} />
+        <Button className="bg-white" onPress={toggleSidebar}>
+          <FaBarsStaggered size={20} />
         </Button>
       </div>
 
