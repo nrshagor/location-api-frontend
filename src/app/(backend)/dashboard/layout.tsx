@@ -66,7 +66,7 @@ export default function DashboardLayout({
           </Link>
 
           {/* Admin with Dropdown */}
-          {userRole == "supperAdmin" && (
+          {userRole == "superAdmin" && (
             <div>
               <button
                 onClick={toggleadminMenu}
@@ -102,17 +102,6 @@ export default function DashboardLayout({
               </div>
             </div>
           )}
-
-          <Link
-            href="/dashboard/profile"
-            className={`block py-2 px-4 rounded ${
-              pathname === "/dashboard/profile"
-                ? "bg-gray-600"
-                : "hover:bg-gray-700"
-            }`}
-          >
-            Profile
-          </Link>
 
           {/* Subscription with Dropdown */}
           <div>
@@ -182,6 +171,16 @@ export default function DashboardLayout({
                   : 0,
               }}
             >
+              <Link
+                href="/dashboard/profile"
+                className={`block py-2 px-4 mt-4 rounded ${
+                  pathname === "/dashboard/profile"
+                    ? "bg-gray-600"
+                    : "hover:bg-gray-700"
+                }`}
+              >
+                Profile
+              </Link>
               <Link
                 href="/dashboard/change-password"
                 className={`block py-2 px-4 mt-4 rounded ${

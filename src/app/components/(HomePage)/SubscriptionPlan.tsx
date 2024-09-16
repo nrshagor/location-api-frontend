@@ -39,6 +39,10 @@ const SubscriptionPlan = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      <h2 className="text-center p-4 font-bold text-5xl text-gray-600">
+        {" "}
+        API SUSCRIPTION PLAN{" "}
+      </h2>
       {/* Plan Duration Selection */}
       <div className="flex justify-center mb-8 space-x-4">
         <button

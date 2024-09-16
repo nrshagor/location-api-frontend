@@ -16,9 +16,9 @@ const Home: React.FC = () => {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4">
       {/* Centered CallCount */}
-      <div className="mb-8 w-full max-w-4xl">
+      {/* <div className="mb-8 w-full max-w-4xl">
         <CallCount />
-      </div>
+      </div> */}
 
       {/* Language Toggle Button */}
       <button

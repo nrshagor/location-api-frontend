@@ -15,16 +15,14 @@ export function middleware(req: NextRequest) {
 
   try {
     const decoded: DecodedToken = jwtDecode(token);
-
+    console.log(decoded);
     // Define role-based access control
     const { role } = decoded;
 
     // Define protected paths and their required roles
     const rolePaths: { [key: string]: string[] } = {
-      "/dashboard/profile": ["admin", "user", "supperAdmin"],
-      "/dashboard/": ["admin", "user", "supperAdmin"],
-      // "/dashboard/userlist": ["admin"],
-      // "/dashboard/productlist": ["admin", "user"],
+      "/dashboard/profile": ["admin", "user", "superAdmin"],
+      "/dashboard/admin": ["superAdmin"],
     };
 
     const pathname = req.nextUrl.pathname;
@@ -48,10 +46,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/dashboard/profile",
-    // "/dashboard/userlist",
-    // "/dashboard/productlist",
-  ],
+  matcher: ["/dashboard/profile", "/dashboard/admin/:path*"],
 };
