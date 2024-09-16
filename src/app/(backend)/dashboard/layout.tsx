@@ -74,7 +74,7 @@ export default function DashboardLayout({
                   isadminOpen ? "bg-gray-600" : "hover:bg-gray-700"
                 }`}
               >
-                admin
+                Admin
                 {isadminOpen ? <IoIosArrowDown /> : <IoIosArrowForward />}
               </button>
               <div

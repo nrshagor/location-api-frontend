@@ -229,6 +229,15 @@ const DomainInfo = () => {
         <p className="mb-4">
           Plan Amount: <span className="font-bold">{amount}</span>
         </p>
+        {(transactionType == "bkash" && (
+          <p className="mb-4">Bkash Number: 019295678719</p>
+        )) ||
+          (transactionType == "bank" && (
+            <p className="mb-4">DBBL Account NO: 2861580009817</p>
+          )) ||
+          (transactionType == "rocket" && (
+            <p className="mb-4">Rocket Number: 01929567819</p>
+          ))}
         <select
           value={transactionType}
           onChange={(e) => setTransactionType(e.target.value)}
@@ -236,6 +245,7 @@ const DomainInfo = () => {
         >
           <option value="bkash">Bkash</option>
           <option value="bank">Bank</option>
+          <option value="rocket">Rocket</option>
         </select>
         <input
           type="text"

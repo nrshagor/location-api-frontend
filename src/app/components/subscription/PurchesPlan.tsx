@@ -217,6 +217,16 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
               Step 2: Enter Transaction Details
             </h2>
             <p className="mb-4">Plan Amount: {amount} Taka</p>
+            {(transactionType == "bkash" && (
+              <p className="mb-4">Bkash Number: 019295678719</p>
+            )) ||
+              (transactionType == "bank" && (
+                <p className="mb-4">DBBL Account NO: 2861580009817</p>
+              )) ||
+              (transactionType == "rocket" && (
+                <p className="mb-4">Rocket Number: 01929567819</p>
+              ))}
+
             <select
               value={transactionType}
               onChange={handleTransactionTypeChange}
@@ -224,6 +234,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
             >
               <option value="bkash">Bkash</option>
               <option value="bank">Bank</option>
+              <option value="rocket">Rocket</option>
             </select>
             <input
               type="text"

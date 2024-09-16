@@ -8,26 +8,36 @@ import CallCount from "./components/callCount";
 import SubscriptionPlan from "./components/(HomePage)/SubscriptionPlan";
 
 const Home: React.FC = () => {
-  const [show, setShow] = useState(Boolean);
+  const [show, setShow] = useState<Boolean>(false); // Initialize with false
   const isShowing = () => {
-    if (show == false) {
-      setShow(true);
-    } else {
-      setShow(false);
-    }
+    setShow((prevShow) => !prevShow); // Toggle between true/false
   };
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-start  p-24">
-      <CallCount />
 
-      <button onClick={isShowing}>
+  return (
+    <main className="flex flex-col items-center justify-center min-h-screen p-4">
+      {/* Centered CallCount */}
+      <div className="mb-8 w-full max-w-4xl">
+        <CallCount />
+      </div>
+
+      {/* Language Toggle Button */}
+      <button
+        className="mb-8 px-4 py-2  text-black bg-gray-200 rounded-lg hover:bg-gray-100 transition duration-300"
+        onClick={isShowing}
+      >
         Click for{" "}
-        {!show ? <span className="text-green-500">Bangla</span> : `English`}
+        {show ? `English` : <span className="text-gray-900">Bangla</span>}
       </button>
-      <div className="flex">
+
+      {/* Conditional GroupSelected Display */}
+      <div className="w-full max-w-4xl">
         {!show ? <GroupSelected /> : <GroupSelectedBn />}
       </div>
-      <SubscriptionPlan />
+
+      {/* Centered SubscriptionPlan */}
+      <div className="w-full max-w-6xl mt-8">
+        <SubscriptionPlan />
+      </div>
     </main>
   );
 };

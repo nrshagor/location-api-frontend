@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CustomSelect from "../CustomSelect";
+
 interface Option {
   value: string;
   label: string;
@@ -53,9 +54,6 @@ const GroupSelectedBn = () => {
     fetchCountries();
   }, []);
 
-  // console.log("states", states);
-  // console.log(states);
-  // console.log(states);
   useEffect(() => {
     if (selectedCountry) {
       const country = countries.find(
@@ -123,16 +121,19 @@ const GroupSelectedBn = () => {
       setSubdistricts([]);
     }
   }, [selectedDistrict]);
+
   return (
-    <div>
-      <p>Location Name In Bangla</p>
-      <div className="flex py-2">
+    <div className="px-4 py-4 flex flex-col lg:flex-col gap-4 items-center">
+      <p className="text-lg mb-2">Location Name In Bangla</p>
+      {/* Responsive container */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* Country Select */}
         <CustomSelect
           options={countries.map((country) => ({
             value: country.id.toString(),
             label: country.name_bn,
           }))}
-          placeholder="Select a country"
+          placeholder="দেশ নির্বাচন করুন"
           allowClear
           onChange={(value) => {
             setSelectedCountry(value);
@@ -141,9 +142,10 @@ const GroupSelectedBn = () => {
           }}
         />
 
+        {/* State Select */}
         <CustomSelect
           options={states}
-          placeholder="Select a state"
+          placeholder="রাজ্য নির্বাচন করুন"
           disabled={!selectedCountry ? true : false}
           allowClear
           onChange={(value) => {
@@ -152,9 +154,10 @@ const GroupSelectedBn = () => {
           }}
         />
 
+        {/* District Select */}
         <CustomSelect
           options={districts}
-          placeholder="Select a district"
+          placeholder="জেলা নির্বাচন করুন"
           disabled={!selectedState ? true : false}
           allowClear
           onChange={(value) => {
@@ -162,9 +165,10 @@ const GroupSelectedBn = () => {
           }}
         />
 
+        {/* Subdistrict Select */}
         <CustomSelect
           options={subdistricts}
-          placeholder="Select a subdistrict"
+          placeholder="উপজেলা নির্বাচন করুন"
           disabled={!selectedDistrict ? true : false}
           allowClear
           onChange={() => {}}
