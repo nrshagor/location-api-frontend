@@ -89,7 +89,7 @@ const DomainInfo = () => {
 
       const token = getCookie("token");
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/subscription/`, // Ensure this endpoint exists
+        `${process.env.NEXT_PUBLIC_URL}/subscription/`,
         subscriptionPayload,
         {
           headers: {
@@ -98,7 +98,6 @@ const DomainInfo = () => {
           },
         }
       );
-      console.log(subscriptionPayload);
       if (response.status === 201) {
         console.log("Successfully renewed subscription");
         setUserDomain("");
@@ -122,62 +121,107 @@ const DomainInfo = () => {
   };
 
   return (
-    <div>
-      {domainList.map((singleDomain, index) => (
-        <div key={index}>
-          <div className="flex">
-            <p>Domain: {singleDomain.domain}</p>
-            <p>Plan: {singleDomain.plan}</p>
-            <p>
-              Limit:{" "}
-              {singleDomain.callLimit === -1
-                ? "Unlimited"
-                : singleDomain.callLimit}
-            </p>
-            <p>Used: {singleDomain.used}</p>
-            <p>
-              Remaining:{" "}
-              {singleDomain.callLimit === -1
-                ? "Infinity"
-                : singleDomain.remaining}
-            </p>
-            <p>{singleDomain.message}</p>
-            <p>{singleDomain.endDate}</p>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold text-center mb-6">
+        Domain Information
+      </h1>
 
-            <button
-              onClick={() =>
-                getValue(singleDomain.planId, singleDomain.domain)
-              }>
-              Renew
-            </button>
-            <button onClick={() => upgrated(singleDomain.domain)}>
-              Upgrade
-            </button>
-          </div>
+      {domainList.length === 0 ? (
+        <p className="text-center text-gray-500">No domains available</p>
+      ) : (
+        <div className="flex flex-wrap justify-center items-center gap-3">
+          {domainList.map((singleDomain, index) => (
+            <div key={index} className="p-4 bg-white rounded-lg shadow-md">
+              <div className="flex flex-col space-y-2">
+                <p>
+                  <span className="font-semibold">Domain:</span>{" "}
+                  {singleDomain.domain}
+                </p>
+                <p>
+                  <span className="font-semibold">Plan:</span>{" "}
+                  {singleDomain.plan}
+                </p>
+                <p>
+                  <span className="font-semibold">Limit:</span>{" "}
+                  {singleDomain.callLimit === -1
+                    ? "Unlimited"
+                    : singleDomain.callLimit}
+                </p>
+                <p>
+                  <span className="font-semibold">Used:</span>{" "}
+                  {singleDomain.used}
+                </p>
+                <p>
+                  <span className="font-semibold">Remaining:</span>{" "}
+                  {singleDomain.callLimit === -1
+                    ? "Infinity"
+                    : singleDomain.remaining}
+                </p>
+                <p>
+                  <span className="font-semibold">Message:</span>{" "}
+                  {singleDomain.message}
+                </p>
+                <p>
+                  <span className="font-semibold">End Date:</span>{" "}
+                  {singleDomain.endDate}
+                </p>
+
+                <div className="flex space-x-2 mt-4">
+                  <button
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    onClick={() =>
+                      getValue(singleDomain.planId, singleDomain.domain)
+                    }
+                  >
+                    Renew
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                    onClick={() => upgrated(singleDomain.domain)}
+                  >
+                    Upgrade
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
 
       {/* Modal for Renew Step 1: Domain Input */}
       <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2>Step 1: Enter Domain</h2>
+        <h2 className="text-xl font-semibold mb-4">Step 1: Enter Domain</h2>
         <input
           type="text"
           placeholder="Enter your domain"
           value={userDomain}
           readOnly
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
         />
-        <button onClick={handlePlanSelection}>Next</button>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          onClick={handlePlanSelection}
+        >
+          Next
+        </button>
       </CustomModal>
 
       {/* Modal for Renew Step 2: Transaction Details */}
       <CustomModal
         isOpen={isModalStep2Open}
-        onClose={() => setIsModalStep2Open(false)}>
-        <h2>Step 2: Enter Transaction Details</h2>
-        <p>Plan Amount: {amount}</p>
+        onClose={() => setIsModalStep2Open(false)}
+      >
+        <h2 className="text-xl font-semibold mb-4">
+          Step 2: Enter Transaction Details
+        </h2>
+        <p className="mb-4">
+          Plan Amount: <span className="font-bold">{amount}</span>
+        </p>
         <select
           value={transactionType}
-          onChange={(e) => setTransactionType(e.target.value)}>
+          onChange={(e) => setTransactionType(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
+        >
           <option value="bkash">Bkash</option>
           <option value="bank">Bank</option>
         </select>
@@ -186,14 +230,21 @@ const DomainInfo = () => {
           placeholder="Enter Account Number"
           value={accountNumber}
           onChange={(e) => setAccountNumber(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
         />
         <input
           type="text"
           placeholder="Enter Transaction ID"
           value={transactionId}
           onChange={(e) => setTransactionId(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
         />
-        <button onClick={handleRenewSubmit}>Submit</button>
+        <button
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+          onClick={handleRenewSubmit}
+        >
+          Submit
+        </button>
       </CustomModal>
 
       {/* Modal for Upgrade */}
