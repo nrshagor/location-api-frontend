@@ -1,17 +1,9 @@
-"use client";
-import TransactionTable from "@/app/components/TransactionTable";
-import { auth, DecodedToken } from "@/app/utils/jwt";
-import Link from "next/link";
-const subcription = "/dashboard/subscription";
-import React from "react";
-
-const Page = () => {
+// dashboard/page.tsx
+export default function DashboardPage() {
   return (
     <div>
-      <Link href={subcription}>subcription</Link>
-      <TransactionTable />
+      <h1 className="text-2xl font-semibold mb-4">Dashboard Home</h1>
+      <p>This is the main dashboard page content.</p>
     </div>
   );
-};
-
-export default Page;
+}
