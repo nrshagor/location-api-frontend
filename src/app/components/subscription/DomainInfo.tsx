@@ -30,7 +30,8 @@ const DomainInfo = () => {
   const [transactionType, setTransactionType] = useState<string>("bkash");
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [transactionId, setTransactionId] = useState<string>("");
-
+  // Loading and error state
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchDomainInfo = async () => {
       try {
@@ -76,6 +77,7 @@ const DomainInfo = () => {
   };
 
   const handleRenewSubmit = async () => {
+    setLoading(true);
     try {
       const subscriptionPayload = {
         ipOrDomain: userDomain,
@@ -117,6 +119,8 @@ const DomainInfo = () => {
       } else {
         console.log("Unknown error occurred:", error);
       }
+    } finally {
+      setLoading(false); // Stop loading after API call
     }
   };
 
@@ -240,10 +244,15 @@ const DomainInfo = () => {
           className="w-full p-2 border border-gray-300 rounded-lg mb-4"
         />
         <button
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+          disabled={loading}
+          className={`w-full ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-600 hover:bg-green-700"
+          } text-white py-2 rounded-lg`}
           onClick={handleRenewSubmit}
         >
-          Submit
+          {loading ? "Processing..." : "Submit"}
         </button>
       </CustomModal>
 

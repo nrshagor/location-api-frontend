@@ -1,7 +1,6 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import "@/app/style/Subcription.scss";
 import CustomModal from "@/app/components/CustomModal";
 import { auth } from "@/app/utils/jwt";
 import { getCookie } from "cookie-handler-pro";
@@ -9,7 +8,7 @@ import { getCookie } from "cookie-handler-pro";
 interface plans {
   callLimit: number;
   durationInMonths: number;
-  id: 1;
+  id: number;
   name: string;
   price: number;
   regularPrices: number;
@@ -31,6 +30,10 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
   const [transactionId, setTransactionId] = useState<string>("");
   const [amount, setAmount] = useState<number>(0); // Track amount by plan
   const [planId, setPlanId] = useState<number>();
+
+  // Loading and error state
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const openModal = (plan: any) => {
     setPlanId(plan.id);
@@ -57,7 +60,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
 
     fetchPlans();
   }, []);
-  console.log(plans);
+
   const isMonthly = (e: number) => {
     setMonthlyOrYear(e);
   };
@@ -73,6 +76,8 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
   };
 
   const handleSubmit = async (e: any) => {
+    setLoading(true);
+    setErrorMessage(""); // Clear any previous errors
     try {
       const subscriptionPayload = {
         ipOrDomain: userDomain,
@@ -94,7 +99,6 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
           },
         }
       );
-      console.log("Submission response:", response.data);
       if (response.status === 201) {
         closeModal();
         onClose();
@@ -103,7 +107,10 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
         setPlanId(undefined);
       }
     } catch (error) {
-      console.log("Error submitting subscription:", error);
+      console.error("Error submitting subscription:", error);
+      setErrorMessage("Failed to submit the subscription. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading after API call
     }
   };
 
@@ -112,83 +119,107 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
   };
 
   return (
-    <div className="subscriptionContainer">
-      <div className="groupBtn">
+    <div className="w-full p-4">
+      {/* Plan selection buttons */}
+      <div className="flex justify-center gap-4 mb-6">
         <button
-          className={monthyOrYear === 1 ? "active" : ""}
+          className={`px-4 py-2 rounded-lg ${
+            monthyOrYear === 1 ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => isMonthly(1)}
         >
           Monthly
         </button>
         <button
-          className={monthyOrYear === 12 ? "active" : ""}
+          className={`px-4 py-2 rounded-lg ${
+            monthyOrYear === 12 ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => isMonthly(12)}
         >
           Yearly
         </button>
         <button
-          className={monthyOrYear === 24 ? "active" : ""}
+          className={`px-4 py-2 rounded-lg ${
+            monthyOrYear === 24 ? "bg-blue-600 text-white" : "bg-gray-200"
+          }`}
           onClick={() => isMonthly(24)}
         >
           Two Yearly
         </button>
       </div>
 
-      <div className="groupBox">
+      {/* Plan cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {plans.map(
           (plan) =>
             (plan.durationInMonths === monthyOrYear && (
-              <div className="boxContainer" key={plan.id}>
-                <div className="boxPaid" onClick={() => openModal(plan)}>
-                  <p>Name: {plan.name}</p>
-                  <p>
-                    Limit:{" "}
-                    {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
-                  </p>
-                  <p>Duration In Months: {plan.durationInMonths}</p>
-                  <p>Regular Prices: {plan.regularPrices} Taka</p>
-                  <p>Discount: {plan.discount}%</p>
-                  <p>Current Price: {plan.currentPrice}</p>
-                </div>
+              <div
+                key={plan.id}
+                className="bg-white shadow-lg rounded-lg p-4 cursor-pointer transition transform hover:scale-105"
+                onClick={() => openModal(plan)}
+              >
+                <h3 className="text-lg font-semibold">{plan.name}</h3>
+                <p>
+                  Limit: {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
+                </p>
+                <p>Duration: {plan.durationInMonths} months</p>
+                <p>Regular Price: {plan.regularPrices} Taka</p>
+                <p>Discount: {plan.discount}%</p>
+                <p className="text-blue-600 font-bold">
+                  Current Price: {plan.currentPrice} Taka
+                </p>
               </div>
             )) ||
             (role == "supperAdmin" && plan.durationInMonths === 0 && (
-              <div className="boxContainer" key={plan.id}>
-                <div className="boxPaid" onClick={() => openModal(plan)}>
-                  <p>Name: {plan.name}</p>
-                  <p>
-                    Limit:{" "}
-                    {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
-                  </p>
-                  <p>Duration In Months: {plan.durationInMonths}</p>
-                  <p>Regular Prices: {plan.regularPrices} Taka</p>
-                  <p>Discount: {plan.discount}%</p>
-                  <p>Current Price: {plan.currentPrice}</p>
-                </div>
+              <div
+                key={plan.id}
+                className="bg-white shadow-lg rounded-lg p-4 cursor-pointer transition transform hover:scale-105"
+                onClick={() => openModal(plan)}
+              >
+                <h3 className="text-lg font-semibold">{plan.name}</h3>
+                <p>
+                  Limit: {plan.callLimit === -1 ? "Unlimited" : plan.callLimit}
+                </p>
+                <p>Duration: {plan.durationInMonths} months</p>
+                <p>Regular Price: {plan.regularPrices} Taka</p>
+                <p>Discount: {plan.discount}%</p>
+                <p className="text-blue-600 font-bold">
+                  Current Price: {plan.currentPrice} Taka
+                </p>
               </div>
             ))
         )}
       </div>
 
+      {/* Modal for domain and transaction details */}
       <CustomModal isOpen={isModalOpen} onClose={closeModal}>
         {modalStep === 1 ? (
-          <>
-            <h2>Step 1: Enter Domain</h2>
+          <div className="p-4">
+            <h2 className="text-xl font-semibold mb-4">Step 1: Enter Domain</h2>
             <input
               type="text"
               placeholder="Enter your domain"
               value={userDomain}
               onChange={handleSetDomain}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
             />
-            <button onClick={goToNextStep}>Next</button>
-          </>
+            <button
+              onClick={goToNextStep}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg"
+            >
+              Next
+            </button>
+          </div>
         ) : (
-          <>
-            <h2>Step 2: Enter Transaction Details</h2>
-            <p>Plan Amount: {amount}</p>
+          <div className="p-4">
+            <h2 className="text-xl font-semibold mb-4">
+              Step 2: Enter Transaction Details
+            </h2>
+            <p className="mb-4">Plan Amount: {amount} Taka</p>
             <select
               value={transactionType}
               onChange={handleTransactionTypeChange}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
             >
               <option value="bkash">Bkash</option>
               <option value="bank">Bank</option>
@@ -198,15 +229,33 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
               placeholder="Enter Account Number"
               value={accountNumber}
               onChange={(e) => setAccountNumber(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
             />
             <input
               type="text"
               placeholder="Enter Transaction ID"
               value={transactionId}
               onChange={(e) => setTransactionId(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
             />
-            <button onClick={handleSubmit}>Submit</button>
-          </>
+
+            {/* Error message */}
+            {errorMessage && (
+              <p className="text-red-500 text-center mb-4">{errorMessage}</p>
+            )}
+
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`w-full ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              } text-white py-2 rounded-lg`}
+            >
+              {loading ? "Processing..." : "Submit"}
+            </button>
+          </div>
         )}
       </CustomModal>
     </div>
