@@ -119,8 +119,9 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
   };
 
   return (
-    <div className="w-full p-4">
+    <div className="w-full p-4 h-full">
       {/* Plan selection buttons */}
+      <h1 className="text-center pb-4 text-3xl font-bold	">Selected A Plan</h1>
       <div className="flex justify-center gap-4 mb-6">
         <button
           className={`px-4 py-2 rounded-lg ${

@@ -1,16 +1,15 @@
 import dynamic from "next/dynamic";
 import React from "react";
-const PurchesPlan = dynamic(
-  () => import("@/app/components/subscription/PurchesPlan"),
+const TransactionTable = dynamic(
+  () => import("@/app/components/TransactionTable"),
   {
     ssr: false,
   }
 );
-
 const Page = () => {
   return (
     <div>
-      <PurchesPlan />
+      <TransactionTable />
     </div>
   );
 };
