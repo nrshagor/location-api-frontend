@@ -1,16 +1,25 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { auth } from "@/app/utils/jwt";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const path = usePathname();
+  console.log(userRole);
+  // Get user ID
+  useEffect(() => {
+    const userRoleFromAuth = auth()?.role;
+    setUserRole(userRoleFromAuth ? String(userRoleFromAuth) : null);
+  }, [path]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -56,39 +65,43 @@ export default function DashboardLayout({
             Dashboard
           </Link>
 
-          {/* Subscription with Dropdown */}
-          <div>
-            <button
-              onClick={toggleadminMenu}
-              className={`w-full text-left flex items-center justify-between py-2 px-4 rounded transition-colors ${
-                isadminOpen ? "bg-gray-600" : "hover:bg-gray-700"
-              }`}
-            >
-              admin
-              {isadminOpen ? <IoIosArrowDown /> : <IoIosArrowForward />}
-            </button>
-            <div
-              ref={adminMenuRef}
-              className={`pl-6 space-y-2 transition-all duration-500 ease-in-out overflow-hidden ${
-                isadminOpen ? "max-h-[500px]" : "max-h-0"
-              }`}
-              style={{
-                maxHeight: isadminOpen ? adminMenuRef.current?.scrollHeight : 0,
-              }}
-            >
-              <Link
-                href="/dashboard/admin/TransactionTable"
-                className={`block py-2 px-4 mt-4 rounded ${
-                  pathname === "/dashboard/admin/TransactionTable"
-                    ? "bg-gray-600"
-                    : "hover:bg-gray-700"
+          {/* Admin with Dropdown */}
+          {userRole == "supperAdmin" && (
+            <div>
+              <button
+                onClick={toggleadminMenu}
+                className={`w-full text-left flex items-center justify-between py-2 px-4 rounded transition-colors ${
+                  isadminOpen ? "bg-gray-600" : "hover:bg-gray-700"
                 }`}
               >
-                Transaction
-              </Link>
-              {/* Add more nested links as needed */}
+                admin
+                {isadminOpen ? <IoIosArrowDown /> : <IoIosArrowForward />}
+              </button>
+              <div
+                ref={adminMenuRef}
+                className={`pl-6 space-y-2 transition-all duration-500 ease-in-out overflow-hidden ${
+                  isadminOpen ? "max-h-[500px]" : "max-h-0"
+                }`}
+                style={{
+                  maxHeight: isadminOpen
+                    ? adminMenuRef.current?.scrollHeight
+                    : 0,
+                }}
+              >
+                <Link
+                  href="/dashboard/admin/TransactionTable"
+                  className={`block py-2 px-4 mt-4 rounded ${
+                    pathname === "/dashboard/admin/TransactionTable"
+                      ? "bg-gray-600"
+                      : "hover:bg-gray-700"
+                  }`}
+                >
+                  Transaction
+                </Link>
+                {/* Add more nested links as needed */}
+              </div>
             </div>
-          </div>
+          )}
 
           <Link
             href="/dashboard/profile"
