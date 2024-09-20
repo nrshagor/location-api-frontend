@@ -4,7 +4,7 @@ import axios from "axios";
 import { getCookie } from "cookie-handler-pro";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface Option {
   value: string;
@@ -51,6 +51,8 @@ const BasicInfo: React.FC = () => {
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [multipleFiles, setMultipleFiles] = useState<File[]>([]);
   const [multiplePreviewUrls, setMultiplePreviewUrls] = useState<string[]>([]);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
@@ -196,7 +198,32 @@ const BasicInfo: React.FC = () => {
       setPreviewUrl(URL.createObjectURL(selectedFile));
     }
   };
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
 
+  const handleDragLeave = () => {
+    setDragActive(false);
+  };
+
+  const handleClick = () => {
+    // Programmatically click the hidden input element when the div is clicked
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragActive(false);
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles && droppedFiles.length > 0) {
+      const selectedFile = droppedFiles[0];
+      setFile(selectedFile);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+    }
+  };
   const handleMultipleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files);
@@ -400,29 +427,48 @@ const BasicInfo: React.FC = () => {
           onChange={handleInputChange}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-
-        <div className="flex items-center space-x-4">
+        <div
+          className={`border border-dashed rounded-md p-1 w-40 h-40 flex justify-center items-center ${
+            dragActive ? "border-blue-500" : "border-gray-300"
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleClick}
+          style={{ cursor: "pointer" }}
+        >
           <input
             type="file"
             name="profilePictureUrl"
             accept="image/*"
+            ref={inputRef}
             onChange={handleFileChange}
-            className="border border-gray-300 rounded-md"
+            className="hidden"
           />
-          {previewUrl && (
-            <div className="w-24 h-24">
-              <Image
-                src={previewUrl}
-                alt="Profile Preview"
-                width={96}
-                height={96}
-                className="object-cover rounded-md"
-              />
-            </div>
+          {previewUrl ? (
+            <Image
+              src={previewUrl}
+              alt="Profile Preview"
+              width={96}
+              height={96}
+              className="object-cover rounded-md"
+            />
+          ) : formData.profilePictureUrl ? (
+            <Image
+              src={`${process.env.NEXT_PUBLIC_URL}/${formData.profilePictureUrl}`}
+              alt="Profile Preview"
+              width={100}
+              height={100}
+              className="object-cover rounded-md"
+            />
+          ) : (
+            <p className="text-gray-500">
+              Drag and drop an image, or click to select
+            </p>
           )}
         </div>
 
-        <input
+        {/*  <input
           type="file"
           name="files"
           accept="image/*"
@@ -444,17 +490,17 @@ const BasicInfo: React.FC = () => {
               />
             ))}
           </div>
-        )}
+        )} */}
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-40 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Submit
         </button>
       </form>
 
-      <div className="mt-6">
+      {/*  <div className="mt-6">
         <p className="font-semibold">Single Image:</p>
         {formData.profilePictureUrl && (
           <Image
@@ -467,7 +513,7 @@ const BasicInfo: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-6">
+       <div className="mt-6">
         <p className="font-semibold">Multiple Images:</p>
         <div className="flex space-x-2">
           {uploadedImageUrls.map((url, index) => (
@@ -480,8 +526,8 @@ const BasicInfo: React.FC = () => {
               className="object-cover rounded-md"
             />
           ))}
-        </div>
-      </div>
+        </div> 
+      </div>*/}
 
       <Link
         href="/dashboard/change-password"
