@@ -66,7 +66,7 @@ export default function DashboardLayout({
           </Link>
 
           {/* Admin with Dropdown */}
-          {userRole == "superAdmin" && (
+          {userRole == "superrAdmin" && (
             <div>
               <button
                 onClick={toggleadminMenu}

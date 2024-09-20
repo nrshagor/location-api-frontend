@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import CustomModal from "../CustomModal";
 import { getCookie } from "cookie-handler-pro";
 import PurchesPlan from "./PurchesPlan";
+import { Progress } from "@nextui-org/react";
 
 interface DomainList {
   id: number;
@@ -151,7 +152,7 @@ const DomainInfo = () => {
                     ? "Unlimited"
                     : singleDomain.callLimit}
                 </p>
-                <p>
+                {/* <p>
                   <span className="font-semibold">Used:</span>{" "}
                   {singleDomain.used}
                 </p>
@@ -160,7 +161,8 @@ const DomainInfo = () => {
                   {singleDomain.callLimit === -1
                     ? "Infinity"
                     : singleDomain.remaining}
-                </p>
+                </p> */}
+
                 <p>
                   <span className="font-semibold">Message:</span>{" "}
                   {singleDomain.message}
@@ -177,7 +179,23 @@ const DomainInfo = () => {
                     hour12: true, // This will format the time in 12-hour format with AM/PM
                   })}
                 </p>
-
+                <Progress
+                  label="Used"
+                  size="md"
+                  value={singleDomain.used}
+                  maxValue={
+                    singleDomain.callLimit === -1 ? 0 : singleDomain.remaining
+                  }
+                  formatOptions={{}}
+                  showValueLabel={true}
+                  classNames={{
+                    base: "max-w-md",
+                    track: "drop-shadow-md border border-default",
+                    indicator: "bg-gradient-to-r from-red-300  to-red-600",
+                    label: "tracking-wider font-medium text-default-600",
+                    value: "text-foreground/60",
+                  }}
+                />
                 <div className="flex space-x-2 mt-4">
                   <button
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
