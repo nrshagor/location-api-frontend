@@ -278,6 +278,7 @@ const DomainInfo = () => {
       <CustomModal isOpen={isModalOpen1} onClose={() => setIsModalOpen1(false)}>
         <PurchesPlan
           userDomains={userDomain}
+          readOnly={true}
           onClose={() => setIsModalOpen1(false)} // Pass the close handler
         />
       </CustomModal>

@@ -17,7 +17,7 @@ interface plans {
   tag: string;
 }
 
-const PurchesPlan = ({ userDomains, onClose }: any) => {
+const PurchesPlan = ({ userDomains, onClose, readOnly }: any) => {
   const userId = auth()?.sub;
   const role = auth()?.role;
   const [plans, setPlan] = useState<plans[]>([]);
@@ -201,6 +201,7 @@ const PurchesPlan = ({ userDomains, onClose }: any) => {
               type="text"
               placeholder="Enter your domain"
               value={userDomain}
+              readOnly={readOnly}
               onChange={handleSetDomain}
               className="w-full p-2 border border-gray-300 rounded-lg mb-4"
             />
