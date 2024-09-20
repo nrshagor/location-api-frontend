@@ -5,7 +5,8 @@ import { getCookie } from "cookie-handler-pro";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-
+import Toaster from "./Toaster";
+import { Button } from "@nextui-org/react";
 interface Option {
   value: string;
   label: string;
@@ -39,6 +40,7 @@ const BasicInfo: React.FC = () => {
     firstName: "",
     lastname: "",
     countries: "",
+    companyName: "",
     division: "",
     district: "",
     thana: "",
@@ -56,12 +58,15 @@ const BasicInfo: React.FC = () => {
   const [multipleFiles, setMultipleFiles] = useState<File[]>([]);
   const [multiplePreviewUrls, setMultiplePreviewUrls] = useState<string[]>([]);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
-
+  const [toaster, setToaster] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
   const [countries, setCountries] = useState<Country[]>([]);
   const [divisions, setDivisions] = useState<Option[]>([]);
   const [districts, setDistricts] = useState<Option[]>([]);
   const [thanas, setThanas] = useState<Option[]>([]);
-
+  const [isVerifying, setIsVerifying] = useState(false);
   useEffect(() => {
     const fetchUserData = async () => {
       if (userId !== null) {
@@ -80,6 +85,7 @@ const BasicInfo: React.FC = () => {
           setFormData({
             firstName: userData.firstName,
             lastname: userData.lastname,
+            companyName: userData.companyName,
             countries: userData.countries,
             division: userData.division,
             district: userData.district,
@@ -236,10 +242,12 @@ const BasicInfo: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsVerifying(true);
     try {
       const payload = {
         firstName: formData.firstName,
         lastname: formData.lastname,
+        companyName: formData.companyName,
         countries: formData.countries,
         division: formData.division,
         district: formData.district,
@@ -258,8 +266,14 @@ const BasicInfo: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (response.status == 200) {
+        setToaster({
+          message: "Your data has been submitted successfully!",
+          type: "success",
+        });
+      }
 
-      console.log("Profile update:", response.data);
+      console.log("Profile update:", response);
 
       // If a file is selected, upload it
       if (file) {
@@ -322,220 +336,193 @@ const BasicInfo: React.FC = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Error response:", error.response?.data);
+        setToaster({
+          message: error.response?.data,
+          type: "error",
+        });
       } else {
         console.error("Unexpected error:", error);
       }
+    } finally {
+      setIsVerifying(false);
     }
   };
-
+  useEffect(() => {
+    if (toaster) {
+      const timer = setTimeout(() => {
+        setToaster(null);
+      }, 5000); // Hide toaster after 5 seconds
+      return () => clearTimeout(timer); // Cleanup timer
+    }
+  }, [toaster]);
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <>
+      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Last Name"
+              value={formData.lastname}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <select
+            name="countries"
+            value={formData.countries}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Country</option>
+            {countries.map((country) => (
+              <option key={country.id} value={country.id.toString()}>
+                {country.name_en}
+              </option>
+            ))}
+          </select>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <select
+              name="division"
+              value={formData.division} // Ensure the value is tied to the state
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Division</option>
+              {divisions.map((division) => (
+                <option key={division.value} value={division.value}>
+                  {division.label}
+                </option>
+              ))}
+            </select>
+
+            {/* District Dropdown */}
+            <select
+              name="district"
+              value={formData.district} // Ensure the value is tied to the state
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select District</option>
+              {districts.map((district) => (
+                <option key={district.value} value={district.value}>
+                  {district.label}
+                </option>
+              ))}
+            </select>
+
+            {/* Thana Dropdown */}
+            <select
+              name="thana"
+              value={formData.thana} // Ensure the value is tied to the state
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select Thana</option>
+              {thanas.map((thana) => (
+                <option key={thana.value} value={thana.value}>
+                  {thana.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="postalCode"
+              placeholder="Postal Code"
+              value={formData.postalCode}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="text"
+              name="buildingAddress"
+              placeholder="Building Address"
+              value={formData.buildingAddress}
+              onChange={handleInputChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <input
             type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
+            name="companyName"
+            placeholder="company Name "
+            value={formData.companyName}
             onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
-            type="text"
-            name="lastname"
-            placeholder="Last Name"
-            value={formData.lastname}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <select
-          name="countries"
-          value={formData.countries}
-          onChange={handleInputChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select Country</option>
-          {countries.map((country) => (
-            <option key={country.id} value={country.id.toString()}>
-              {country.name_en}
-            </option>
-          ))}
-        </select>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <select
-            name="division"
-            value={formData.division} // Ensure the value is tied to the state
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <div
+            className={`border border-dashed rounded-md p-1 w-40 h-40 flex justify-center items-center ${
+              dragActive ? "border-blue-500" : "border-gray-300"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handleClick}
+            style={{ cursor: "pointer" }}
           >
-            <option value="">Select Division</option>
-            {divisions.map((division) => (
-              <option key={division.value} value={division.value}>
-                {division.label}
-              </option>
-            ))}
-          </select>
-
-          {/* District Dropdown */}
-          <select
-            name="district"
-            value={formData.district} // Ensure the value is tied to the state
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select District</option>
-            {districts.map((district) => (
-              <option key={district.value} value={district.value}>
-                {district.label}
-              </option>
-            ))}
-          </select>
-
-          {/* Thana Dropdown */}
-          <select
-            name="thana"
-            value={formData.thana} // Ensure the value is tied to the state
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Thana</option>
-            {thanas.map((thana) => (
-              <option key={thana.value} value={thana.value}>
-                {thana.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <input
-          type="text"
-          name="postalCode"
-          placeholder="Postal Code"
-          value={formData.postalCode}
-          onChange={handleInputChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        <input
-          type="text"
-          name="buildingAddress"
-          placeholder="Building Address"
-          value={formData.buildingAddress}
-          onChange={handleInputChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div
-          className={`border border-dashed rounded-md p-1 w-40 h-40 flex justify-center items-center ${
-            dragActive ? "border-blue-500" : "border-gray-300"
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={handleClick}
-          style={{ cursor: "pointer" }}
-        >
-          <input
-            type="file"
-            name="profilePictureUrl"
-            accept="image/*"
-            ref={inputRef}
-            onChange={handleFileChange}
-            className="hidden"
-          />
-          {previewUrl ? (
-            <Image
-              src={previewUrl}
-              alt="Profile Preview"
-              width={96}
-              height={96}
-              className="object-cover rounded-md"
+            <input
+              type="file"
+              name="profilePictureUrl"
+              accept="image/*"
+              ref={inputRef}
+              onChange={handleFileChange}
+              className="hidden"
             />
-          ) : formData.profilePictureUrl ? (
-            <Image
-              src={`${process.env.NEXT_PUBLIC_URL}/${formData.profilePictureUrl}`}
-              alt="Profile Preview"
-              width={100}
-              height={100}
-              className="object-cover rounded-md"
-            />
-          ) : (
-            <p className="text-gray-500">
-              Drag and drop an image, or click to select
-            </p>
-          )}
-        </div>
-
-        {/*  <input
-          type="file"
-          name="files"
-          accept="image/*"
-          multiple
-          onChange={handleMultipleFileChange}
-          className="border border-gray-300 rounded-md"
-        />
-
-        {multiplePreviewUrls.length > 0 && (
-          <div className="flex space-x-2">
-            {multiplePreviewUrls.map((url, index) => (
+            {previewUrl ? (
               <Image
-                key={index}
-                src={url}
-                alt={`Preview ${index}`}
+                src={previewUrl}
+                alt="Profile Preview"
                 width={96}
                 height={96}
                 className="object-cover rounded-md"
               />
-            ))}
+            ) : formData.profilePictureUrl ? (
+              <Image
+                src={`${process.env.NEXT_PUBLIC_URL}/${formData.profilePictureUrl}`}
+                alt="Profile Preview"
+                width={100}
+                height={100}
+                className="object-cover rounded-md"
+              />
+            ) : (
+              <p className="text-gray-500">
+                Drag and drop an image, or click to select
+              </p>
+            )}
           </div>
-        )} */}
+          <Button
+            type="submit"
+            color="primary"
+            isDisabled={isVerifying} // Disable button during loading
+          >
+            {isVerifying ? "Submitting..." : "Submit"}{" "}
+            {/* Change text during loading */}
+          </Button>
+        </form>
 
-        <button
-          type="submit"
-          className="w-40 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <Link
+          href="/dashboard/change-password"
+          className="mt-4 text-blue-500 underline"
         >
-          Submit
-        </button>
-      </form>
-
-      {/*  <div className="mt-6">
-        <p className="font-semibold">Single Image:</p>
-        {formData.profilePictureUrl && (
-          <Image
-            src={`${process.env.NEXT_PUBLIC_URL}/${formData.profilePictureUrl}`}
-            alt="Profile"
-            width={96}
-            height={96}
-            className="object-cover rounded-md"
-          />
-        )}
+          Change Password
+        </Link>
+        {toaster && <Toaster message={toaster.message} type={toaster.type} />}
       </div>
-
-       <div className="mt-6">
-        <p className="font-semibold">Multiple Images:</p>
-        <div className="flex space-x-2">
-          {uploadedImageUrls.map((url, index) => (
-            <Image
-              key={index}
-              src={`${process.env.NEXT_PUBLIC_URL}/${url}`}
-              alt={`Uploaded ${index}`}
-              width={96}
-              height={96}
-              className="object-cover rounded-md"
-            />
-          ))}
-        </div> 
-      </div>*/}
-
-      <Link
-        href="/dashboard/change-password"
-        className="mt-4 text-blue-500 underline"
-      >
-        Change Password
-      </Link>
-    </div>
+    </>
   );
 };
 
