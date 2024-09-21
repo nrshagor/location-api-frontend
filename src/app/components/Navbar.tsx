@@ -28,7 +28,7 @@ const NavbarComponent = () => {
   }, [path]);
 
   // Menu items
-  const menuItems = userid ? ["Dashboard", "Log Out"] : ["Login", "Register"];
+  const menuItems = userid ? ["Dashboard"] : ["Login", "Register"];
 
   // Function to check if the current path is active
   const isActive = (href: string) => path === href;
