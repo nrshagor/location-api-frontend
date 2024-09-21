@@ -50,8 +50,7 @@ const NavbarComponent = () => {
             className={clsx(
               " text-inherit p-2 rounded",
               isActive("/") && "bg-gray-300 font-bold"
-            )}
-          >
+            )}>
             Home
           </Link>
         </NavbarBrand>
@@ -61,8 +60,7 @@ const NavbarComponent = () => {
             className={clsx(
               " text-inherit p-2 rounded",
               isActive("/docs") && "bg-gray-300 font-bold"
-            )}
-          >
+            )}>
             Docs
           </Link>
         </NavbarBrand>
@@ -75,8 +73,7 @@ const NavbarComponent = () => {
             className={clsx(
               " text-inherit p-2 rounded",
               isActive("/") && "bg-gray-300 font-bold"
-            )}
-          >
+            )}>
             Home
           </Link>
         </NavbarBrand>
@@ -86,9 +83,18 @@ const NavbarComponent = () => {
             className={clsx(
               " text-inherit p-2 rounded",
               isActive("/docs") && "bg-gray-300 font-bold"
-            )}
-          >
+            )}>
             Docs
+          </Link>
+        </NavbarBrand>
+        <NavbarBrand>
+          <Link
+            href="/how-to"
+            className={clsx(
+              " text-inherit p-2 rounded",
+              isActive("/how-to") && "bg-gray-300 font-bold"
+            )}>
+            How To
           </Link>
         </NavbarBrand>
 
@@ -100,8 +106,7 @@ const NavbarComponent = () => {
                 className={clsx(
                   "p-2 rounded",
                   isActive("/dashboard") && "bg-gray-300 font-bold"
-                )}
-              >
+                )}>
                 Dashboard
               </Link>
             </NavbarItem>
@@ -111,8 +116,7 @@ const NavbarComponent = () => {
                 className={clsx(
                   "p-2 rounded",
                   isActive("/dashboard/profile") && "bg-gray-300 font-bold"
-                )}
-              >
+                )}>
                 Profile
               </Link>
             </NavbarItem>
@@ -125,8 +129,7 @@ const NavbarComponent = () => {
                 className={clsx(
                   "p-2 rounded",
                   isActive("/login") && "bg-gray-300 font-bold"
-                )}
-              >
+                )}>
                 Login
               </Link>
             </NavbarItem>
@@ -136,8 +139,7 @@ const NavbarComponent = () => {
                 className={clsx(
                   "p-2 rounded",
                   isActive("/register") && "bg-gray-300 font-bold"
-                )}
-              >
+                )}>
                 Register
               </Link>
             </NavbarItem>
@@ -156,6 +158,16 @@ const NavbarComponent = () => {
 
       {/* Mobile menu */}
       <NavbarMenu>
+        <NavbarMenuItem>
+          <Link
+            href="/how-to"
+            className={clsx(
+              " text-inherit p-2 rounded",
+              isActive("/how-to") && "bg-gray-300 font-bold"
+            )}>
+            How To
+          </Link>
+        </NavbarMenuItem>
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={index}>
             <Link
@@ -163,8 +175,7 @@ const NavbarComponent = () => {
               className={clsx(
                 "w-full p-2 rounded",
                 isActive(`/${item.toLowerCase()}`) && "bg-gray-300 font-bold"
-              )}
-            >
+              )}>
               {item}
             </Link>
           </NavbarMenuItem>

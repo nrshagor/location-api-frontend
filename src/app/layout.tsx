@@ -18,9 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`overflow-x-hidden ${inter.className}`}
-        suppressHydrationWarning
-      >
+        className={`overflow-x-hidden bg-white  ${inter.className}`}
+        suppressHydrationWarning>
         <Navbar />
         {children}
       </body>

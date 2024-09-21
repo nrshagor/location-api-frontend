@@ -165,7 +165,9 @@ const DomainInfo = () => {
 
                 <p>
                   <span className="font-semibold">Message:</span>{" "}
-                  {singleDomain.message}
+                  {singleDomain.callLimit === -1
+                    ? "You have unlimited call remaining"
+                    : singleDomain.message}
                 </p>
                 <p>
                   <span className="font-semibold">End Date:</span>{" "}
@@ -184,7 +186,9 @@ const DomainInfo = () => {
                   size="md"
                   value={singleDomain.used}
                   maxValue={
-                    singleDomain.callLimit === -1 ? 0 : singleDomain.remaining
+                    singleDomain.callLimit === -1
+                      ? singleDomain.used + 1000
+                      : singleDomain.remaining
                   }
                   formatOptions={{}}
                   showValueLabel={true}
@@ -201,14 +205,12 @@ const DomainInfo = () => {
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                     onClick={() =>
                       getValue(singleDomain.planId, singleDomain.domain)
-                    }
-                  >
+                    }>
                     Renew
                   </button>
                   <button
                     className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                    onClick={() => upgrated(singleDomain.domain)}
-                  >
+                    onClick={() => upgrated(singleDomain.domain)}>
                     Upgrade
                   </button>
                 </div>
@@ -230,8 +232,7 @@ const DomainInfo = () => {
         />
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          onClick={handlePlanSelection}
-        >
+          onClick={handlePlanSelection}>
           Next
         </button>
       </CustomModal>
@@ -239,8 +240,7 @@ const DomainInfo = () => {
       {/* Modal for Renew Step 2: Transaction Details */}
       <CustomModal
         isOpen={isModalStep2Open}
-        onClose={() => setIsModalStep2Open(false)}
-      >
+        onClose={() => setIsModalStep2Open(false)}>
         <h2 className="text-xl font-semibold mb-4">
           Step 2: Enter Transaction Details
         </h2>
@@ -259,8 +259,7 @@ const DomainInfo = () => {
         <select
           value={transactionType}
           onChange={(e) => setTransactionType(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-        >
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4">
           <option value="bkash">Bkash</option>
           <option value="bank">Bank</option>
           <option value="rocket">Rocket</option>
@@ -286,8 +285,7 @@ const DomainInfo = () => {
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-green-600 hover:bg-green-700"
           } text-white py-2 rounded-lg`}
-          onClick={handleRenewSubmit}
-        >
+          onClick={handleRenewSubmit}>
           {loading ? "Processing..." : "Submit"}
         </button>
       </CustomModal>
