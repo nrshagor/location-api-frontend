@@ -126,7 +126,7 @@ const DomainInfo = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 ">
       <h1 className="text-2xl font-bold text-center mb-6">
         Domain Information
       </h1>
@@ -205,12 +205,14 @@ const DomainInfo = () => {
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                     onClick={() =>
                       getValue(singleDomain.planId, singleDomain.domain)
-                    }>
+                    }
+                  >
                     Renew
                   </button>
                   <button
                     className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                    onClick={() => upgrated(singleDomain.domain)}>
+                    onClick={() => upgrated(singleDomain.domain)}
+                  >
                     Upgrade
                   </button>
                 </div>
@@ -232,7 +234,8 @@ const DomainInfo = () => {
         />
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          onClick={handlePlanSelection}>
+          onClick={handlePlanSelection}
+        >
           Next
         </button>
       </CustomModal>
@@ -240,7 +243,8 @@ const DomainInfo = () => {
       {/* Modal for Renew Step 2: Transaction Details */}
       <CustomModal
         isOpen={isModalStep2Open}
-        onClose={() => setIsModalStep2Open(false)}>
+        onClose={() => setIsModalStep2Open(false)}
+      >
         <h2 className="text-xl font-semibold mb-4">
           Step 2: Enter Transaction Details
         </h2>
@@ -259,7 +263,8 @@ const DomainInfo = () => {
         <select
           value={transactionType}
           onChange={(e) => setTransactionType(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg mb-4">
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
+        >
           <option value="bkash">Bkash</option>
           <option value="bank">Bank</option>
           <option value="rocket">Rocket</option>
@@ -285,7 +290,8 @@ const DomainInfo = () => {
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-green-600 hover:bg-green-700"
           } text-white py-2 rounded-lg`}
-          onClick={handleRenewSubmit}>
+          onClick={handleRenewSubmit}
+        >
           {loading ? "Processing..." : "Submit"}
         </button>
       </CustomModal>

@@ -7,7 +7,7 @@ const BasicInfo = dynamic(() => import("@/app/components/BasicInfo"), {
 
 const Page = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center">
       <BasicInfo />
     </div>
   );

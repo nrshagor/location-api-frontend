@@ -133,13 +133,14 @@ const Page: React.FC = () => {
 
       {/* Sidebar for API navigation */}
       <aside
-        className={`md:z-[1] z-[10] w-64 pb-10 pt-6 px-4 bg-gray-200 md:h-[86vh] h-[92vh] overflow-y-auto fixed top-16 transition-transform duration-300 ease-in-out transform ${
+        className={`md:z-[1] z-[10] w-64 pb-10 pt-6 px-4 bg-gray-200 md:h-full h-[92vh] overflow-y-auto fixed top-16 transition-transform duration-300 ease-in-out transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
         style={{
           scrollbarWidth: "none", // Firefox
           msOverflowStyle: "none", // Internet Explorer and Edge
-        }}>
+        }}
+      >
         <style>
           {`
         /* Hide scrollbar for Chrome, Safari and Opera */
@@ -157,7 +158,8 @@ const Page: React.FC = () => {
                 onPress={() => {
                   handleScroll(api.name.toLowerCase());
                   toggleSidebar(); // Close sidebar on mobile after click
-                }}>
+                }}
+              >
                 {api.name}
               </Button>
             </li>
@@ -175,14 +177,16 @@ const Page: React.FC = () => {
             <div
               key={api.name}
               id={api.name.toLowerCase()}
-              className="w-full max-w-lg mx-auto p-6">
+              className="w-full max-w-lg mx-auto p-6"
+            >
               <h2 className="text-xl font-semibold">{api.name}</h2>
               <p className="text-sm mb-2">{api.description}</p>
               <div className="flex flex-col md:flex-row md:items-start items-start justify-between">
                 <p className="break-all">{api.url}</p>
                 <Button
                   className="mt-2 md:mt-0 md:ml-5"
-                  onPress={() => fetchData(api.name, api.url)}>
+                  onPress={() => fetchData(api.name, api.url)}
+                >
                   Get Data
                 </Button>
               </div>

@@ -38,7 +38,7 @@ export default function DashboardLayout({
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="relative flex max-h-full overflow-y-hidden">
+    <div className="relative flex min-h-full overflow-y-hidden">
       {/* Sidebar Toggle Button for Mobile */}
       <button
         onClick={toggleSidebar}
@@ -198,7 +198,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 bg-gray-100 p-6 lg:ml-64">
+      <main className="flex-1 flex justify-center items-center overflow-y-auto md:overflow-y-hidden min-h-[90vh] bg-gray-100 p-6 lg:ml-64">
         {children} {/* Nested Page content will be rendered here */}
       </main>
     </div>

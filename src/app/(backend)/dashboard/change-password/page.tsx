@@ -67,8 +67,8 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <div className=" flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-[85vw] max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Change Password</h1>
 
         {/* Error message */}
