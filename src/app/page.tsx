@@ -6,6 +6,7 @@ import GroupSelected from "./components/(HomePage)/GroupSelected";
 import GroupSelectedBn from "./components/(HomePage)/GroupSelectedBn";
 import CallCount from "./components/callCount";
 import SubscriptionPlan from "./components/(HomePage)/SubscriptionPlan";
+import ReviewSlider from "./components/ReviewSlider";
 
 const Home: React.FC = () => {
   const [show, setShow] = useState<Boolean>(false); // Initialize with false
@@ -23,7 +24,8 @@ const Home: React.FC = () => {
       {/* Language Toggle Button */}
       <button
         className="mb-8 px-4 py-2  text-black bg-gray-200 rounded-lg hover:bg-gray-100 transition duration-300"
-        onClick={isShowing}>
+        onClick={isShowing}
+      >
         Click for{" "}
         {show ? `English` : <span className="text-gray-900">Bangla</span>}
       </button>
@@ -37,6 +39,7 @@ const Home: React.FC = () => {
       <div className="w-full max-w-6xl mt-8">
         <SubscriptionPlan />
       </div>
+      <ReviewSlider />
     </main>
   );
 };
