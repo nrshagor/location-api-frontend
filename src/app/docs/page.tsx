@@ -122,7 +122,7 @@ const Page: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row ">
       {/* Mobile Toggle Button */}
       <div className="p-4  shadow-lg md:hidden flex justify-between fixed bg-white z-10 items-center w-full">
         <h1 className="text-2xl font-bold">API Documentation</h1>
@@ -133,9 +133,21 @@ const Page: React.FC = () => {
 
       {/* Sidebar for API navigation */}
       <aside
-        className={`w-64 p-4 bg-gray-200 h-screen fixed  top-16 z-50 transition-transform duration-300 ease-in-out transform ${
+        className={`md:z-[1] z-[10] w-64 pb-10 pt-6 px-4 bg-gray-200 md:h-[86vh] h-[92vh] overflow-y-auto fixed top-16 transition-transform duration-300 ease-in-out transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}>
+        } md:translate-x-0`}
+        style={{
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // Internet Explorer and Edge
+        }}>
+        <style>
+          {`
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .custom-scroll::-webkit-scrollbar {
+            display: none;
+        }
+    `}
+        </style>
         <h2 className="font-bold mb-4">APIs</h2>
         <ul className="space-y-2">
           {apiList.map((api) => (
@@ -154,7 +166,7 @@ const Page: React.FC = () => {
       </aside>
 
       {/* Main content */}
-      <div className="flex-grow p-4 mt-16 md:mt-0">
+      <div className="flex-grow pb-36 mt-16 md:mt-0">
         <h1 className="hidden md:block text-2xl font-bold mb-4">
           API Documentation
         </h1>
