@@ -40,8 +40,7 @@ const SubscriptionPlan = () => {
   return (
     <div className="max-w-6xl mx-auto p-4">
       <h2 className="text-center p-4 font-bold md:text-5xl text-large text-gray-600">
-        {" "}
-        API SUSCRIPTION PLAN{" "}
+        API SUBSCRIPTION PLAN
       </h2>
       {/* Plan Duration Selection */}
       <div className="flex justify-center mb-8 space-x-4">
@@ -51,8 +50,7 @@ const SubscriptionPlan = () => {
               ? "bg-blue-500"
               : "bg-gray-300 hover:bg-blue-500"
           }`}
-          onClick={() => isMonthly(1)}
-        >
+          onClick={() => isMonthly(1)}>
           Monthly
         </button>
         <button
@@ -61,8 +59,7 @@ const SubscriptionPlan = () => {
               ? "bg-blue-500"
               : "bg-gray-300 hover:bg-blue-500"
           }`}
-          onClick={() => isMonthly(12)}
-        >
+          onClick={() => isMonthly(12)}>
           Yearly
         </button>
         <button
@@ -71,8 +68,7 @@ const SubscriptionPlan = () => {
               ? "bg-blue-500"
               : "bg-gray-300 hover:bg-blue-500"
           }`}
-          onClick={() => isMonthly(24)}
-        >
+          onClick={() => isMonthly(24)}>
           Two Yearly
         </button>
       </div>
@@ -84,8 +80,7 @@ const SubscriptionPlan = () => {
             plan?.durationInMonths === monthlyOrYear && (
               <div
                 key={plan.id}
-                className="p-6 bg-white shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition duration-300"
-              >
+                className="p-6 bg-white shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition duration-300">
                 <div className="text-center text-blue-600 font-bold mb-4">
                   {plan.tag}
                 </div>
