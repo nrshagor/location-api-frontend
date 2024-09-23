@@ -27,6 +27,26 @@ const apiList = [
       "Fetches details of the country with English name 'Bangladesh'.",
   },
   {
+    name: "States",
+    url: `${process.env.NEXT_PUBLIC_URL}/state`,
+    description: "Fetches the list of all states.",
+  },
+  {
+    name: "State by ID",
+    url: `${process.env.NEXT_PUBLIC_URL}/state/4`,
+    description: "Fetches details of the state with ID 4.",
+  },
+  {
+    name: "State by name_bn",
+    url: `${process.env.NEXT_PUBLIC_URL}/state/খুলনা`,
+    description: "Fetches details of the state with Bengali name 'খুলনা'.",
+  },
+  {
+    name: "State by name_en",
+    url: `${process.env.NEXT_PUBLIC_URL}/state/Khulna`,
+    description: "Fetches details of the state with English name 'Khulna'.",
+  },
+  {
     name: "Districts",
     url: `${process.env.NEXT_PUBLIC_URL}/districts`,
     description: "Fetches the list of all districts.",
@@ -69,26 +89,6 @@ const apiList = [
     url: `${process.env.NEXT_PUBLIC_URL}/subdistrict/Rajbari Sadar`,
     description:
       "Fetches details of the subdistrict with English name 'Rajbari Sadar'.",
-  },
-  {
-    name: "States",
-    url: `${process.env.NEXT_PUBLIC_URL}/state`,
-    description: "Fetches the list of all states.",
-  },
-  {
-    name: "State by ID",
-    url: `${process.env.NEXT_PUBLIC_URL}/state/4`,
-    description: "Fetches details of the state with ID 4.",
-  },
-  {
-    name: "State by name_bn",
-    url: `${process.env.NEXT_PUBLIC_URL}/state/খুলনা`,
-    description: "Fetches details of the state with Bengali name 'খুলনা'.",
-  },
-  {
-    name: "State by name_en",
-    url: `${process.env.NEXT_PUBLIC_URL}/state/Khulna`,
-    description: "Fetches details of the state with English name 'Khulna'.",
   },
 ];
 
