@@ -61,7 +61,7 @@ const ReviewGrid = () => {
                 <h3 className="font-semibold text-lg">
                   {review.user.firstName}
                 </h3>
-                <p className="text-sm text-gray-600">Rate: {review.rate}/5</p>
+                {/* <p className="text-sm text-gray-600">Rate: {review.rate}/5</p> */}
               </div>
             </div>
 

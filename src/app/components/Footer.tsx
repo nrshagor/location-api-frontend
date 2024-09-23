@@ -27,9 +27,9 @@ const Footer = () => {
         </div>
         <div className="mb-4 md:mb-0">
           <p className="text-center md:text-left">
-            Contact us:{" "}
-            <a href="mailto:codenrs.com@gmail.com" className="underline">
-              codenrs.com@gmail.com
+            Contact us:
+            <a href="mailto:contact@nrshagor.com" className="underline">
+              contact@nrshagor.com
             </a>
           </p>
         </div>
