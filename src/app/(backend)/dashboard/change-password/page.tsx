@@ -42,7 +42,7 @@ const Page = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/change-password",
+        `${process.env.NEXT_PUBLIC_URL}/auth/change-password`,
         formData,
         {
           headers: {
