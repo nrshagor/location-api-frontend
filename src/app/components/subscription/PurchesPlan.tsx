@@ -171,7 +171,7 @@ const PurchesPlan = ({ userDomains, onClose, readOnly }: any) => {
                 </p>
               </div>
             )) ||
-            (role == "superrAdmin" && plan.durationInMonths === 0 && (
+            (role == "superAdmin" && plan.durationInMonths === 0 && (
               <div
                 key={plan.id}
                 className="bg-white shadow-lg rounded-lg p-4 cursor-pointer transition transform hover:scale-105"
