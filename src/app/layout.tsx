@@ -12,14 +12,17 @@ export const metadata: Metadata = {
     "Access comprehensive location data for Bangladesh with our powerful API. Get country, state, district, and sub-district information instantly.",
   keywords: [
     "Location API",
-    "Location API Bangladesh",
-    "Location API for Bangladesh",
+    "Bangladesh Location API",
     "Bangladesh districts API",
     "Subdistricts API Bangladesh",
     "Geographic data API",
     "Global location API",
     "Bangladesh location data",
     "Location API for developers",
+    "E-commerce location API",
+    "Courier services location data",
+    "Location API for websites",
+    "Location-based app data API",
   ],
 };
 

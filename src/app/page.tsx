@@ -15,107 +15,29 @@ const Home: React.FC = () => {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4">
-      {/* SEO-friendly Intro */}
-      <section className="w-full max-w-4xl text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Comprehensive Location API for Bangladesh
+      {/* SEO-Friendly Content */}
+      <section className="text-center py-8">
+        <h1 className="md:text-3xl uppercase text-2xl text-justify font-bold mb-4">
+          Locations API - Simplifying Location Data for Developers
         </h1>
-        <p className="text-lg text-gray-700 mb-6">
-          Welcome to our <strong>Location API</strong>, your one-stop solution
-          for real-time geographic data. Designed for developers, our API offers
-          precise information about
-          <strong>
-            {" "}
-            Bangladesh&apos;s states, districts, and subdistricts
-          </strong>
-          , with <strong>global expansion</strong> on the horizon. Whether
-          you&apos;re building location-based apps, logistics tools, or mapping
-          services, our API ensures you get the data you need fast and
-          efficiently.
+        <p className="md:text-lg text-base max-w-3xl text-justify mx-auto mb-6 text-gray-700">
+          Our Locations API is designed to help developers working on
+          e-commerce, courier services, and other websites that require precise
+          user location data. Currently, we provide complete location
+          information for Bangladesh, including country, state, district, and
+          sub-district. Future updates will include location data from
+          additional countries to help you scale globally.
+        </p>
+        <p className="md:text-lg text-base max-w-3xl text-justify mx-auto text-gray-700">
+          Whether you&apos;re building a local or international platform,
+          Locations API offers fast, reliable, and easy-to-use location services
+          that can seamlessly integrate into your project. Stay ahead of the
+          curve by simplifying your location-based data management.
         </p>
       </section>
 
-      {/* Key Features */}
-      <section className="w-full max-w-4xl text-left mb-8">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Key Features
-        </h2>
-        <ul className="list-disc ml-6 text-lg text-gray-700">
-          <li>
-            <strong>Accurate Data:</strong> Access up-to-date and reliable
-            location data for Bangladesh.
-          </li>
-          <li>
-            <strong>Comprehensive Coverage:</strong> From country and state to
-            districts and subdistricts, our API provides detailed geographic
-            hierarchies.
-          </li>
-          <li>
-            <strong>Easy Integration:</strong> Simple, developer-friendly API
-            with JSON responses for quick implementation.
-          </li>
-          <li>
-            <strong>Scalable for Global Expansion:</strong> While we currently
-            focus on Bangladesh, we&apos;re preparing to expand our coverage to
-            other countries soon.
-          </li>
-        </ul>
-      </section>
-
-      {/* Why Choose Our Location API */}
-      <section className="w-full max-w-4xl text-left mb-8">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Why Choose Our Location API?
-        </h2>
-        <ul className="list-disc ml-6 text-lg text-gray-700">
-          <li>
-            <strong>Real-time Updates:</strong> Receive the most current
-            location data for precise mapping and analysis.
-          </li>
-          <li>
-            <strong>Developer Support:</strong> Comprehensive documentation and
-            support to help you integrate seamlessly.
-          </li>
-          <li>
-            <strong>Scalability:</strong> Designed to handle large-scale data
-            requests as your application grows.
-          </li>
-          <li>
-            <strong>Reliable Infrastructure:</strong> Built for high
-            availability and speed, so you can trust our API to deliver when it
-            matters.
-          </li>
-        </ul>
-      </section>
-
-      {/* Future Expansion */}
-      <section className="w-full max-w-4xl text-left mb-8">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Future Expansion
-        </h2>
-        <p className="text-lg text-gray-700">
-          We are continuously expanding our API to include more{" "}
-          <strong>global locations</strong>. Stay tuned as we broaden our
-          database to provide geographic data for countries worldwide!
-        </p>
-      </section>
-
-      {/* Call to Action */}
-      <section className="w-full max-w-4xl text-center mb-8">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Ready to Get Started?
-        </h2>
-        <p className="text-lg text-gray-700 mb-6">
-          Access our Location API now and enhance your app with real-time
-          geographic data from <strong>Bangladesh</strong>.
-        </p>
-        <button className="px-6 py-3 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700 transition">
-          Get Started Today!
-        </button>
-      </section>
-
-      {/* Centered CallCount */}
-      <div className="mb-8 w-full max-w-4xl text-center ">
+      {/* CallCount Component */}
+      <div className="mb-8 w-full max-w-4xl text-center">
         <CallCount />
       </div>
 
@@ -125,7 +47,11 @@ const Home: React.FC = () => {
         onClick={isShowing}
       >
         Click for{" "}
-        {show ? `English` : <span className="text-gray-900">Bangla</span>}
+        {show ? (
+          `English Name For Location`
+        ) : (
+          <span className="text-gray-900">Bangla Name For Location</span>
+        )}
       </button>
 
       {/* Conditional GroupSelected Display */}
@@ -140,6 +66,26 @@ const Home: React.FC = () => {
 
       {/* Review Slider */}
       <ReviewSlider />
+
+      {/* Key Features Section */}
+      <section className="text-center py-8">
+        <h2 className="text-3xl font-semibold mb-4">
+          Why Choose Locations API?
+        </h2>
+        <ul className="list-disc list-inside max-w-3xl mx-auto md:text-lg text-base text-left text-gray-700">
+          <li>
+            Comprehensive location data for countries, states, districts, and
+            sub-districts
+          </li>
+          <li>
+            Currently supports Bangladesh, with more countries coming soon
+          </li>
+          <li>
+            Perfect for e-commerce, courier services, and location-based apps
+          </li>
+          <li>Fast, reliable, and easy-to-integrate API for developers</li>
+        </ul>
+      </section>
     </main>
   );
 };
