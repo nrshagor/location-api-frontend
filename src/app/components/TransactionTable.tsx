@@ -16,8 +16,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Tooltip,
-  Select,
 } from "@nextui-org/react";
 
 interface Transaction {
@@ -27,6 +25,7 @@ interface Transaction {
   transactionType: string;
   amount: number;
   isVerify: boolean;
+  ipOrDomain: string;
 }
 
 interface TransactionResponse {
@@ -43,14 +42,15 @@ const TransactionTable: React.FC = () => {
     accountNumber: "",
     transactionId: "",
     transactionType: "",
+    ipOrDomain: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Manage modal state manually
   const [isOpen, setIsOpen] = useState(false);
   const [transactionToVerify, setTransactionToVerify] =
     useState<Transaction | null>(null);
   const [transactionIdInput, setTransactionIdInput] = useState<string>("");
+  const [ipOrDomainInput, setipOrDomainInput] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -95,8 +95,9 @@ const TransactionTable: React.FC = () => {
 
   const openModal = (transaction: Transaction) => {
     setTransactionToVerify(transaction);
+    setTransactionIdInput(transaction.transactionId); // Set transaction ID input
+    setipOrDomainInput(transaction.ipOrDomain); // Set ipOrDomain input
     setSuccessMessage("");
-    // setTransactionIdInput(transaction.transactionId);
     setIsOpen(true);
   };
 
@@ -107,6 +108,7 @@ const TransactionTable: React.FC = () => {
         `${process.env.NEXT_PUBLIC_URL}/transaction/verify`,
         {
           transactionId: transactionIdInput,
+          ipOrDomain: ipOrDomainInput,
         }
       );
 
@@ -168,12 +170,12 @@ const TransactionTable: React.FC = () => {
                 onChange={setPage}
               />
             </div>
-          }
-        >
+          }>
           <TableHeader>
             <TableColumn>ID</TableColumn>
             <TableColumn>Account Number</TableColumn>
             <TableColumn>Transaction ID</TableColumn>
+            <TableColumn>Ip Or Domain</TableColumn>
             <TableColumn>Transaction Type</TableColumn>
             <TableColumn>Amount</TableColumn>
             <TableColumn>Verified</TableColumn>
@@ -185,6 +187,7 @@ const TransactionTable: React.FC = () => {
                 <TableCell>{transaction.id}</TableCell>
                 <TableCell>{transaction.accountNumber}</TableCell>
                 <TableCell>{transaction.transactionId}</TableCell>
+                <TableCell>{transaction.ipOrDomain}</TableCell>
                 <TableCell>{transaction.transactionType}</TableCell>
                 <TableCell>{transaction.amount}</TableCell>
                 <TableCell>{transaction.isVerify ? "Yes" : "No"}</TableCell>
@@ -204,6 +207,7 @@ const TransactionTable: React.FC = () => {
           </TableBody>
         </Table>
       )}
+
       <div className="flex gap-4 mb-4">
         <label htmlFor="limit">Rows per page:</label>
         <select id="limit" value={limit} onChange={handleLimitChange}>
@@ -214,6 +218,7 @@ const TransactionTable: React.FC = () => {
           <option value={100}>100</option>
         </select>
       </div>
+
       {/* Modal for Verification */}
       <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
         <ModalContent>
@@ -224,6 +229,12 @@ const TransactionTable: React.FC = () => {
               value={transactionIdInput}
               onChange={(e) => setTransactionIdInput(e.target.value)}
             />
+            <Input
+              readOnly
+              placeholder="IP or Domain"
+              value={ipOrDomainInput} // Show the IP or Domain in the input
+              onChange={(e) => setipOrDomainInput(e.target.value)}
+            />
 
             {successMessage && (
               <Button
@@ -232,8 +243,7 @@ const TransactionTable: React.FC = () => {
                     ? "success"
                     : "danger"
                 }
-                variant="flat"
-              >
+                variant="flat">
                 <p>{successMessage}</p>
               </Button>
             )}
@@ -242,15 +252,13 @@ const TransactionTable: React.FC = () => {
             <Button
               color="danger"
               variant="light"
-              onPress={() => setIsOpen(false)}
-            >
+              onPress={() => setIsOpen(false)}>
               Close
             </Button>
             <Button
               color="primary"
               isLoading={isSubmitting}
-              onPress={handleVerifySubmit}
-            >
+              onPress={handleVerifySubmit}>
               {isSubmitting ? "Loading..." : "Submit"}
             </Button>
           </ModalFooter>
