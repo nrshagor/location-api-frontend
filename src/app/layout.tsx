@@ -35,8 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`overflow-x-hidden bg-white  ${inter.className}`}
-        suppressHydrationWarning
-      >
+        suppressHydrationWarning>
         <Navbar />
         {children}
         <Footer />

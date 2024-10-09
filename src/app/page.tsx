@@ -37,15 +37,14 @@ const Home: React.FC = () => {
       </section>
 
       {/* CallCount Component */}
-      <div className="mb-8 w-full max-w-4xl text-center">
+      {/* <div className="mb-8 w-full max-w-4xl text-center">
         <CallCount />
-      </div>
+      </div> */}
 
       {/* Language Toggle Button */}
       <button
         className="mb-8 px-4 py-2 text-black bg-gray-200 rounded-lg hover:bg-gray-100 transition duration-300"
-        onClick={isShowing}
-      >
+        onClick={isShowing}>
         Click for{" "}
         {show ? (
           `English Name For Location`
