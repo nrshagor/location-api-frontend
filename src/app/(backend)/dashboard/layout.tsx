@@ -98,7 +98,50 @@ export default function DashboardLayout({
                 >
                   Transaction
                 </Link>
-                {/* Add more nested links as needed */}
+              </div>
+              <div
+                ref={adminMenuRef}
+                className={`pl-6 space-y-2 transition-all duration-500 ease-in-out overflow-hidden ${
+                  isadminOpen ? "max-h-[500px]" : "max-h-0"
+                }`}
+                style={{
+                  maxHeight: isadminOpen
+                    ? adminMenuRef.current?.scrollHeight
+                    : 0,
+                }}
+              >
+                <Link
+                  href="/dashboard/admin/user-list"
+                  className={`block py-2 px-4 mt-4 rounded ${
+                    pathname === "/dashboard/admin/user-list"
+                      ? "bg-gray-600"
+                      : "hover:bg-gray-700"
+                  }`}
+                >
+                  User List
+                </Link>
+              </div>
+              <div
+                ref={adminMenuRef}
+                className={`pl-6 space-y-2 transition-all duration-500 ease-in-out overflow-hidden ${
+                  isadminOpen ? "max-h-[500px]" : "max-h-0"
+                }`}
+                style={{
+                  maxHeight: isadminOpen
+                    ? adminMenuRef.current?.scrollHeight
+                    : 0,
+                }}
+              >
+                <Link
+                  href="/dashboard/admin/subscription-plan"
+                  className={`block py-2 px-4 mt-4 rounded ${
+                    pathname === "/dashboard/admin/subscription-plan"
+                      ? "bg-gray-600"
+                      : "hover:bg-gray-700"
+                  }`}
+                >
+                  Subscription Plan
+                </Link>
               </div>
             </div>
           )}
