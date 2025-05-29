@@ -252,7 +252,7 @@ const DomainInfo = () => {
           Plan Amount: <span className="font-bold">{amount}</span>
         </p>
         {(transactionType == "bkash" && (
-          <p className="mb-4">Bkash Number: 019295678719</p>
+          <p className="mb-4">Bkash Number: 01929567819</p>
         )) ||
           (transactionType == "bank" && (
             <>

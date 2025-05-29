@@ -219,7 +219,7 @@ const PurchesPlan = ({ userDomains, onClose, readOnly }: any) => {
             </h2>
             <p className="mb-4">Plan Amount: {amount} Taka</p>
             {(transactionType == "bkash" && (
-              <p className="mb-4">Bkash Number: 019295678719</p>
+              <p className="mb-4">Bkash Number: 01929567819</p>
             )) ||
               (transactionType == "bank" && (
                 <>
